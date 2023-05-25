@@ -6,7 +6,7 @@ import {
 } from '../../../house/domain/entities/Employee';
 import { EmployeeApplicationService } from '../../../house/application/service/EmployeeApplicationService';
 import { Result } from '../../../../kernel/Result/Result';
-import { EmployeeEntrypoint } from 'entrypoint/employee.entrypoint';
+import { EmployeeEntrypoint } from '../entrypoint/employee.entrypoint';
 
 @Injectable()
 export class EmployeeService {

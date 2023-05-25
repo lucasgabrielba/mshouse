@@ -1,11 +1,11 @@
 import { v4 } from 'uuid';
 import * as Joi from 'joi';
-import { Result } from '../../../../kernel/Result/Result.js';
+import { Result } from '../../../../kernel/Result/Result';
 import {
   Auditable,
   AuditableProps,
-} from '../../../../kernel/domain/entity/Auditable.js';
-import { HouseDTO } from '../../DTO/HouseDTO.js';
+} from '../../../../kernel/domain/entity/Auditable';
+import { HouseDTO } from '../../DTO/HouseDTO';
 
 export interface CreateHousePropsPrimitive {
   name: string;

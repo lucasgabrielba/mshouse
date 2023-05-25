@@ -6,7 +6,7 @@ import {
   House,
   UpdateHousePropsPrimitive,
 } from '../../../house/domain/entities/House';
-import { HouseEntrypoint } from 'entrypoint/house.entrypoint';
+import { HouseEntrypoint } from '../entrypoint/house.entrypoint';
 
 @Injectable()
 export class HouseService {
@@ -48,7 +48,7 @@ export class HouseService {
     return await this.applicationService.update(HouseDTO);
   }
 
-  async remove(id: string): Promise<Result<boolean>> {
+  async delete(id: string): Promise<Result<boolean>> {
     return await this.applicationService.remove(id);
   }
 }

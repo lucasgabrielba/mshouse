@@ -1,12 +1,12 @@
 import { v4 } from 'uuid';
 import * as Joi from 'joi';
-import { Result } from '../../../../kernel/Result/Result.js';
-import { EmployeeDTO } from '../../DTO/EmployeeDTO.js';
+import { Result } from '../../../../kernel/Result/Result';
+import { EmployeeDTO } from '../../DTO/EmployeeDTO';
 import {
   Auditable,
   AuditableProps,
-} from '../../../../kernel/domain/entity/Auditable.js';
-import { EmployeeType } from '../enum/EmployeeType.js';
+} from '../../../../kernel/domain/entity/Auditable';
+import { EmployeeType } from '../enum/EmployeeType';
 
 export interface CreateEmployeePropsPrimitive {
   name: string;
