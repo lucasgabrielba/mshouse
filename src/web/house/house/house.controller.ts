@@ -14,7 +14,7 @@ import {
 } from '../../../house/domain/entities/House';
 import { HouseService } from './house.service';
 
-@Controller('House')
+@Controller('house')
 export class HouseController {
   constructor(private readonly service: HouseService) {}
 
@@ -51,7 +51,7 @@ export class HouseController {
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<boolean> {
-    const result = await this.service.remove(id);
+    const result = await this.service.delete(id);
 
     return result.data;
   }

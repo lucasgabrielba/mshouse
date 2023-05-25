@@ -14,7 +14,7 @@ import {
 import { EmployeeService } from './employee.service';
 import { EmployeeDTO } from '../../../house/DTO/EmployeeDTO';
 
-@Controller('Employee')
+@Controller('employee')
 export class EmployeeController {
   constructor(private readonly service: EmployeeService) {}
 

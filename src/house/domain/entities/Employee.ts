@@ -7,16 +7,22 @@ import {
   AuditableProps,
 } from '../../../../kernel/domain/entity/Auditable';
 import { EmployeeType } from '../enum/EmployeeType';
+import { House } from './House';
 
 export interface CreateEmployeePropsPrimitive {
   name: string;
   type: EmployeeType;
+  houseId: string;
 }
 
 export interface UpdateEmployeePropsPrimitive
   extends Partial<CreateEmployeePropsPrimitive> {}
 
-export interface CreateEmployeeProps extends CreateEmployeePropsPrimitive {}
+export interface CreateEmployeeProps {
+  name: string;
+  type: EmployeeType;
+  house: House;
+}
 
 export interface EmployeeProps extends CreateEmployeeProps, AuditableProps {}
 
@@ -35,11 +41,16 @@ export class Employee extends Auditable {
     return this.props.type;
   }
 
+  get house(): House {
+    return this.props.house;
+  }
+
   static create(props: CreateEmployeeProps): Result<Employee> {
     const validated = Employee.validate({
       id: v4(),
       name: props.name,
       type: EmployeeType[props.type],
+      house: props.house,
       createdAt: new Date(),
       updatedAt: undefined,
       deletedAt: undefined,
@@ -57,6 +68,7 @@ export class Employee extends Auditable {
       ...props,
       id: props.id ?? v4(),
       type: EmployeeType[props.type],
+      house: House.reconstitute(props.house).data,
       createdAt: props.createdAt ? new Date(props.createdAt) : undefined,
       updatedAt: props.updatedAt ? new Date(props.updatedAt) : undefined,
       deletedAt: props.deletedAt ? new Date(props.deletedAt) : undefined,
@@ -80,6 +92,7 @@ export class Employee extends Auditable {
           EmployeeType.ATTENDANT,
         )
         .required(),
+      house: Joi.object().instance(House).required(),
       createdAt: Joi.object().instance(Date).required(),
       updatedAt: Joi.object().instance(Date).optional(),
       deletedAt: Joi.object().instance(Date).optional(),
@@ -99,6 +112,7 @@ export class Employee extends Auditable {
       id: this.id,
       name: this.name,
       type: this.type,
+      house: this.house.toDTO(),
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt ? this.updatedAt.toISOString() : null,
       deletedAt: this.props.deletedAt

@@ -3,6 +3,8 @@ import { EmployeeDTO } from '../../src/house/DTO/EmployeeDTO';
 import { EmployeeType } from '../../src/house/domain/enum/EmployeeType';
 import { Employee } from '../../src/house/domain/entities/Employee';
 import { ORMEmployee } from '../../src/infra/database/entities/ORMEmployee';
+import { createHouseDTO, createHouse } from './house';
+import { ORMHouse } from '../../src/infra/database/entities/ORMHouse';
 
 export const createEmployeeDTO = (
   type?: 'manager' | 'attendante' | 'technique',
@@ -37,6 +39,10 @@ export const createEmployeeDTO = (
   return {
     name: chance().name(),
     type: employeeType,
+    house: {
+      ...createHouseDTO(),
+      id: chance().guid({ version: 4 }),
+    },
     createdAt: createdAt.toISOString(),
     updatedAt: updatedAt.toISOString(),
     deletedAt: deletedAt.toISOString(),
@@ -58,7 +64,13 @@ export const createEmployee = (
   }
   data = data ?? createEmployeeDTO(type ?? null);
 
-  return Employee.create(data).data;
+  const house = createHouse(data.house);
+  const createData = {
+    ...data,
+    house: house,
+  };
+
+  return Employee.create(createData).data;
 };
 
 export const createORMEmployee = (
@@ -83,16 +95,20 @@ export const createORMEmployee = (
 
     entity.name = Employee.name;
     entity.type = Employee.type;
+    entity.house = ORMHouse.import(Employee.house);
 
     entity.createdAt = Employee.createdAt;
 
     return entity;
   }
 
+  const house = createHouse();
+
   entity.id = chance().guid({ version: 4 });
 
   entity.name = chance().name();
   entity.type = employeeType;
+  entity.house = ORMHouse.import(house);
 
   entity.createdAt = entity.createdAt = new Date();
   entity.updatedAt = new Date();

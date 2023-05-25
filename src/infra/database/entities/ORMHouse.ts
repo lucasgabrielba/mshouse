@@ -1,8 +1,9 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { ORMBase } from './utils/ORMBase';
 import { Injectable } from '@nestjs/common';
 import { House } from '../../../house/domain/entities/House';
 import { HouseDTO } from '../../../house/DTO/HouseDTO';
+import { ORMEmployee } from './ORMEmployee';
 
 @Injectable()
 @Entity('House')
@@ -13,26 +14,31 @@ export class ORMHouse extends ORMBase {
   @Column()
   phone: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone2?: string;
 
-  @Column()
+  @Column({ nullable: true })
   phone3?: string;
 
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   email2?: string;
 
-  @Column()
+  @Column({ nullable: true })
   email3?: string;
 
-  @Column()
+  @Column({ nullable: true })
   site?: string;
 
   @Column()
-  address?: string;
+  address: string;
+
+  @OneToMany(() => ORMEmployee, (employee) => employee.house, {
+    onDelete: 'CASCADE',
+  })
+  employees?: ORMEmployee[];
 
   static import(instance: House): ORMHouse {
     const entity = new ORMHouse();
