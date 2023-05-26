@@ -5,6 +5,7 @@ import { EmployeeType } from '../../../../src/house/domain/enum/EmployeeType';
 import { Employee } from '../../../../src/house/domain/entities/Employee';
 import { Chance as chance } from 'chance';
 import { createEmployeeDTO } from '../../../utils/employee';
+import { createHouse } from '../../../utils/house';
 
 let repository: MockProxy<EmployeeRepositoryInterface>;
 
@@ -21,6 +22,8 @@ describe('Create Employee', () => {
     const data = {
       name: 'test',
       type: EmployeeType.MANAGER,
+      email: chance().email(),
+      house: createHouse(),
     };
 
     const service = new EmployeeDomainService(repository);

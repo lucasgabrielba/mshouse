@@ -7,7 +7,17 @@ export abstract class AbstractDomainService<Model, DTO, CreateProps, Repository>
   constructor(protected repository: Repository) {}
 
   async filter(where?: object): Promise<Result<Model[]>> {
-    const fetched = await (this.repository as any).findEntity(where);
+    const fetched = await (this.repository as any).filter(where);
+
+    if (fetched.isFailure()) {
+      return Result.fail(fetched.error);
+    }
+
+    return Result.ok<Model[]>(fetched.data);
+  }
+
+  async find(): Promise<Result<Model[]>> {
+    const fetched = await (this.repository as any).findEntity();
 
     if (fetched.isFailure()) {
       return Result.fail(fetched.error);

@@ -18,6 +18,7 @@ export class EmployeeService {
 
   async listAllEmployee(): Promise<Result<Employee[]>> {
     const result = await this.applicationService.all();
+
     return result;
   }
 
@@ -33,19 +34,7 @@ export class EmployeeService {
     id: string,
     data: UpdateEmployeePropsPrimitive,
   ): Promise<Result<Employee>> {
-    const entity = await this.applicationService.getById(id);
-
-    if (entity.isFailure()) {
-      return Result.fail(new Error(entity.error.toString()));
-    }
-
-    let EmployeeDTO = entity.data.toDTO();
-    EmployeeDTO = {
-      ...EmployeeDTO,
-      ...data,
-    };
-
-    return await this.applicationService.update(EmployeeDTO);
+    return await this.applicationService.updateEntity(id, data);
   }
 
   async delete(id: string): Promise<Result<boolean>> {

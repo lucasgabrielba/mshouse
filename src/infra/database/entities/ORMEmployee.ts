@@ -13,6 +13,9 @@ export class ORMEmployee extends ORMBase {
   name: string;
 
   @Column()
+  email: string;
+
+  @Column()
   type: string;
 
   @ManyToOne(() => ORMHouse, (house) => house.employees)
@@ -25,6 +28,7 @@ export class ORMEmployee extends ORMBase {
     entity.id = instance.id;
 
     entity.name = instance.name;
+    entity.email = instance.email;
     entity.type = instance.type;
     entity.house = ORMHouse.import(instance.house);
 
@@ -40,6 +44,7 @@ export class ORMEmployee extends ORMBase {
       id: this.id,
 
       name: this.name,
+      email: this.email,
       type: EmployeeType[this.type],
       house: this.house.export().toDTO(),
 

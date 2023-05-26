@@ -17,7 +17,7 @@ export abstract class AbstractApplicationService<
   }
 
   async filter(where?: object): Promise<Result<Model[]>> {
-    const fetched = await (this.manager as any).filter(where);
+    const fetched = await (this.manager as any).filter({ where } as any);
 
     if (fetched.isFailure()) {
       return Result.fail(
@@ -41,8 +41,8 @@ export abstract class AbstractApplicationService<
     return Result.ok<Model>(retrieved.data);
   }
 
-  async get(filters: object): Promise<Result<Model>> {
-    const fetched = await (this.manager as any).getOne({ filters } as any);
+  async get(where: object): Promise<Result<Model>> {
+    const fetched = await (this.manager as any).getOne({ where } as any);
 
     if (fetched.isFailure()) {
       return Result.fail(

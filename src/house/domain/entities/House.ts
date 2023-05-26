@@ -89,6 +89,15 @@ export class House extends Auditable {
     const validated = House.validate({
       ...props,
       id: props.id ?? v4(),
+      name: props.name,
+      phone: props.phone,
+      phone2: props.phone2 ?? undefined,
+      phone3: props.phone3 ?? undefined,
+      email: props.email,
+      email2: props.email2 ?? undefined,
+      email3: props.email3 ?? undefined,
+      site: props.site ?? undefined,
+      address: props.address,
       createdAt: props.createdAt ? new Date(props.createdAt) : undefined,
       updatedAt: props.updatedAt ? new Date(props.updatedAt) : undefined,
       deletedAt: props.deletedAt ? new Date(props.deletedAt) : undefined,
@@ -104,6 +113,7 @@ export class House extends Auditable {
   static validate(data: HouseProps): Result<HouseProps> {
     const schema = {
       id: Joi.string().uuid().required(),
+      name: Joi.string().min(1).max(255).required(),
       phone: Joi.string().min(8).max(255).required(),
       phone2: Joi.string().min(8).max(255).optional(),
       phone3: Joi.string().min(8).max(255).optional(),

@@ -11,6 +11,7 @@ import { House } from './House';
 
 export interface CreateEmployeePropsPrimitive {
   name: string;
+  email: string;
   type: EmployeeType;
   houseId: string;
 }
@@ -20,6 +21,7 @@ export interface UpdateEmployeePropsPrimitive
 
 export interface CreateEmployeeProps {
   name: string;
+  email: string;
   type: EmployeeType;
   house: House;
 }
@@ -37,6 +39,10 @@ export class Employee extends Auditable {
     return this.props.name;
   }
 
+  get email(): string {
+    return this.props.email;
+  }
+
   get type(): EmployeeType {
     return this.props.type;
   }
@@ -49,6 +55,7 @@ export class Employee extends Auditable {
     const validated = Employee.validate({
       id: v4(),
       name: props.name,
+      email: props.email,
       type: EmployeeType[props.type],
       house: props.house,
       createdAt: new Date(),
@@ -67,6 +74,8 @@ export class Employee extends Auditable {
     const validated = Employee.validate({
       ...props,
       id: props.id ?? v4(),
+      name: props.name,
+      email: props.email,
       type: EmployeeType[props.type],
       house: House.reconstitute(props.house).data,
       createdAt: props.createdAt ? new Date(props.createdAt) : undefined,
@@ -85,6 +94,7 @@ export class Employee extends Auditable {
     const schema = {
       id: Joi.string().uuid().required(),
       name: Joi.string().min(1).max(255).required(),
+      email: Joi.string().email().min(1).max(255).required(),
       type: Joi.string()
         .valid(
           EmployeeType.MANAGER,
@@ -111,6 +121,7 @@ export class Employee extends Auditable {
     return {
       id: this.id,
       name: this.name,
+      email: this.email,
       type: this.type,
       house: this.house.toDTO(),
       createdAt: this.createdAt.toISOString(),

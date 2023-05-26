@@ -46,6 +46,7 @@ export class EmployeeDomainService extends AbstractDomainService<
     }
 
     const instance = built.data;
+
     const saved = await this.save(instance);
 
     if (saved.isFailure()) {

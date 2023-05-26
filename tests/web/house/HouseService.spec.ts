@@ -125,14 +125,12 @@ describe('update', () => {
       address: house.address,
     };
 
-    applicationService.getById.mockResolvedValue(Result.ok(house));
-    applicationService.update.mockResolvedValue(Result.ok(house));
+    applicationService.updateEntity.mockResolvedValue(Result.ok(house));
 
     const result = await service.update(house.id, data);
 
     expect(result.isSuccess()).toBe(true);
-    expect(applicationService.getById).toHaveBeenCalled();
-    expect(applicationService.update).toHaveBeenCalled();
+    expect(applicationService.updateEntity).toHaveBeenCalled();
     expect(result.data).toBeInstanceOf(House);
   });
 
@@ -144,63 +142,40 @@ describe('update', () => {
       address: chance().address(),
     };
 
-    applicationService.getById.mockResolvedValue(
+    applicationService.updateEntity.mockResolvedValue(
       Result.fail(new Error('error')),
     );
 
     const result = await service.update(chance().guid({ version: 4 }), data);
 
     expect(result.isFailure()).toBe(true);
-    expect(applicationService.getById).toHaveBeenCalled();
+    expect(applicationService.updateEntity).toHaveBeenCalled();
     expect(result.data).toBe(null);
   });
 
-  it('should return error invalid data', async () => {
-    const House = createHouse();
+  describe('delete', () => {
+    it('should delete a House', async () => {
+      const house = createHouse();
 
-    const data = {
-      name: '',
-      phone: chance().phone(),
-      email: '',
-      address: '',
-    };
+      applicationService.remove.mockResolvedValue(Result.ok(true));
 
-    applicationService.getById.mockResolvedValue(Result.ok(House));
-    applicationService.update.mockResolvedValue(
-      Result.fail(new Error('error')),
-    );
+      const result = await service.delete(house.id);
 
-    const result = await service.update(chance().guid({ version: 4 }), data);
+      expect(result.isSuccess()).toBe(true);
+      expect(applicationService.remove).toHaveBeenCalled();
+      expect(result.data).toBe(true);
+    });
 
-    expect(result.isFailure()).toBe(true);
-    expect(applicationService.getById).toHaveBeenCalled();
-    expect(applicationService.update).toHaveBeenCalled();
-    expect(result.data).toBe(null);
-  });
-});
+    it('should return error invalid id', async () => {
+      applicationService.remove.mockResolvedValue(
+        Result.fail(new Error('error')),
+      );
 
-describe('delete', () => {
-  it('should delete a House', async () => {
-    const house = createHouse();
+      const result = await service.delete(chance().guid({ version: 4 }));
 
-    applicationService.remove.mockResolvedValue(Result.ok(true));
-
-    const result = await service.delete(house.id);
-
-    expect(result.isSuccess()).toBe(true);
-    expect(applicationService.remove).toHaveBeenCalled();
-    expect(result.data).toBe(true);
-  });
-
-  it('should return error invalid id', async () => {
-    applicationService.remove.mockResolvedValue(
-      Result.fail(new Error('error')),
-    );
-
-    const result = await service.delete(chance().guid({ version: 4 }));
-
-    expect(result.isFailure()).toBe(true);
-    expect(applicationService.remove).toHaveBeenCalled();
-    expect(result.data).toBe(null);
+      expect(result.isFailure()).toBe(true);
+      expect(applicationService.remove).toHaveBeenCalled();
+      expect(result.data).toBe(null);
+    });
   });
 });

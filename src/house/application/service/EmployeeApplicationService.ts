@@ -6,7 +6,9 @@ import { EmployeeDomainService } from '../../domain/domainService/EmployeeDomain
 import {
   Employee,
   CreateEmployeePropsPrimitive,
+  UpdateEmployeePropsPrimitive,
 } from '../../domain/entities/Employee';
+import { HouseApplicationService } from './HouseApplicationService';
 
 export class EmployeeApplicationService extends AbstractApplicationService<
   Employee,
@@ -14,8 +16,78 @@ export class EmployeeApplicationService extends AbstractApplicationService<
   CreateEmployeePropsPrimitive,
   EmployeeDomainService
 > {
-  constructor(readonly manager: EmployeeDomainService) {
+  constructor(
+    readonly manager: EmployeeDomainService,
+    protected houseApplicationService: HouseApplicationService,
+  ) {
     super(manager);
+  }
+
+  async create(data: CreateEmployeePropsPrimitive): Promise<Result<Employee>> {
+    const employeeExist = await this.get(
+      { email: data.email },
+    );
+
+    if (employeeExist.isSuccess()) {
+      return Result.fail(new Error(`Já existe usuário criado com esse e-mail.`));
+    }
+
+    const house = await this.houseApplicationService.getById(data.houseId);
+
+    if (house.isFailure()) {
+      return Result.fail(house.error);
+    }
+
+    const createData = {
+      ...data,
+      house: house.data,
+    };
+
+    const result = await this.manager.createAndSave(createData);
+
+    if (result.isFailure()) {
+      return Result.fail(result.error);
+    }
+
+    return result;
+  }
+
+  async updateEntity(
+    id: string,
+    data: UpdateEmployeePropsPrimitive,
+  ): Promise<Result<Employee>> {
+    const entity = await this.getById(id);
+
+    if (entity.isFailure()) {
+      return Result.fail(new Error('não foi possivel resgatar employee'));
+    }
+
+    const updateData = {
+      ...entity.data.toDTO(),
+      ...data,
+    };
+
+    const built = await this.manager.build(updateData);
+
+    if (built.isFailure()) {
+      return Result.fail(
+        new Error(
+          `Não foi possível construir "${this.getModelLabel()}"` +
+          ' a partir dos dados informados.',
+        ),
+      );
+    }
+
+    const instance = built.data;
+    const saved = await this.manager.save(instance);
+
+    if (saved.isFailure()) {
+      return Result.fail(
+        new Error(`Não foi possível salvar "${this.getModelLabel()}".`),
+      );
+    }
+
+    return Result.ok(instance);
   }
 
   async getById(id: string): Promise<Result<Employee>> {
@@ -47,8 +119,9 @@ export class EmployeeApplicationService extends AbstractApplicationService<
     return Result.ok<Employee>(fetched.data);
   }
 
-  async all(where?: object): Promise<Result<Employee[]>> {
-    return this.filter(where as any);
+  async all(): Promise<Result<Employee[]>> {
+    const result = await this.manager.find();
+    return result
   }
 
   async filter(where: object): Promise<Result<Employee[]>> {

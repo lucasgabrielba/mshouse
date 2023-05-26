@@ -38,7 +38,7 @@ export class HouseRepository
 
   async findOneEntity(where: object): Promise<Result<House>> {
     try {
-      const result = await this.findOne({ where });
+      const result = await this.findOne(where);
       if (!result) {
         return Result.fail(new Error('not found'));
       }

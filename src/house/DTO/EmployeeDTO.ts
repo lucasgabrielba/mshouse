@@ -5,6 +5,7 @@ import { HouseDTO } from './HouseDTO';
 export interface EmployeeDTO extends AuditableDTO {
   id: string;
   name: string;
+  email: string;
   type: EmployeeType;
   house: HouseDTO;
 }

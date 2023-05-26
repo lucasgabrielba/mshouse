@@ -26,6 +26,8 @@ describe('create', () => {
       phone: chance().phone(),
       address: chance().address(),
     };
+
+    service.getOne.mockResolvedValue(Result.fail(new Error('')))
     service.createAndSave.mockResolvedValue(Result.ok(createHouse()));
 
     const result = await applicationService.create(data);
@@ -42,6 +44,7 @@ describe('create', () => {
       address: chance().address(),
     };
 
+    service.getOne.mockResolvedValue(Result.ok(createHouse()))
     service.createAndSave.mockResolvedValue(Result.fail(new Error('')));
 
     const result = await applicationService.create(data);
@@ -161,21 +164,21 @@ describe('all', () => {
   it('should return all Houses', async () => {
     const House = createHouse();
 
-    service.filter.mockResolvedValue(Result.ok([House]));
+    service.find.mockResolvedValue(Result.ok([House]));
 
     const result = await applicationService.all();
 
     expect(result.isSuccess()).toBe(true);
-    expect(service.filter).toHaveBeenCalled();
+    expect(service.find).toHaveBeenCalled();
   });
 
   it('should return error with invalid phone', async () => {
-    service.filter.mockResolvedValue(Result.fail(new Error('invalid')));
+    service.find.mockResolvedValue(Result.fail(new Error('invalid')));
 
     const result = await applicationService.all();
 
     expect(result.isFailure()).toBe(true);
-    expect(service.filter).toHaveBeenCalled();
+    expect(service.find).toHaveBeenCalled();
     expect(result.data).toBe(null);
   });
 });

@@ -22,33 +22,25 @@ export class HouseService {
   }
 
   async findOne(id: string): Promise<Result<House>> {
-    return await this.applicationService.getById(id);
+    const result = await this.applicationService.getById(id);
+    return result;
   }
 
   async create(data: CreateHousePropsPrimitive): Promise<Result<House>> {
-    return await this.applicationService.create(data);
+    const result = await this.applicationService.create(data);
+    return result;
   }
 
   async update(
     id: string,
     data: UpdateHousePropsPrimitive,
   ): Promise<Result<House>> {
-    const entity = await this.applicationService.getById(id);
-
-    if (entity.isFailure()) {
-      return Result.fail(new Error(entity.error.toString()));
-    }
-
-    let HouseDTO = entity.data.toDTO();
-    HouseDTO = {
-      ...HouseDTO,
-      ...data,
-    };
-
-    return await this.applicationService.update(HouseDTO);
+    const result = await this.applicationService.updateEntity(id, data);
+    return result;
   }
 
   async delete(id: string): Promise<Result<boolean>> {
-    return await this.applicationService.remove(id);
+    const result = await this.applicationService.remove(id);
+    return result;
   }
 }

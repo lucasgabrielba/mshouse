@@ -6,13 +6,19 @@ import { createEmployee } from '../../../utils/employee';
 import { Chance as chance } from 'chance';
 import { EmployeeType } from '../../../../src/house/domain/enum/EmployeeType';
 import { Result } from '../../../../kernel/Result/Result';
+import { HouseApplicationService } from '../../../../src/house/application/service/HouseApplicationService';
+import { createHouse } from '../../../utils/house';
 
 let service: MockProxy<EmployeeDomainService>;
 let applicationService: EmployeeApplicationService;
 
+let houseApplicationService: MockProxy<HouseApplicationService>;
+
 beforeEach(() => {
+  houseApplicationService = mock<HouseApplicationService>()
+
   service = mock<EmployeeDomainService>();
-  applicationService = new EmployeeApplicationService(service);
+  applicationService = new EmployeeApplicationService(service, houseApplicationService);
 });
 
 afterEach(() => {
@@ -27,11 +33,19 @@ const employeeType = [
 
 describe('create', () => {
   it('should create an employee', async () => {
+    const employee = createEmployee()
+    const house = createHouse()
+
     const data = {
       name: chance().name(),
       type: chance().pickone(employeeType),
+      email: chance().email(),
+      houseId: house.id
     };
-    service.createAndSave.mockResolvedValue(Result.ok(createEmployee()));
+
+    service.getOne.mockResolvedValue(Result.fail(new Error('')));
+    houseApplicationService.getById.mockResolvedValue(Result.ok(house))
+    service.createAndSave.mockResolvedValue(Result.ok(employee));
 
     const result = await applicationService.create(data);
 
@@ -40,11 +54,18 @@ describe('create', () => {
   });
 
   it('should return an error if missing data', async () => {
+    const employee = createEmployee()
+    const house = createHouse()
+
     const data = {
       name: '',
       type: chance().pickone(employeeType),
+      email: chance().email(),
+      houseId: house.id,
     };
 
+    service.getOne.mockResolvedValue(Result.ok(employee));
+    houseApplicationService.getById.mockResolvedValue(Result.ok(house))
     service.createAndSave.mockResolvedValue(Result.fail(new Error('')));
 
     const result = await applicationService.create(data);
@@ -164,21 +185,21 @@ describe('all', () => {
   it('should return all employees', async () => {
     const employee = createEmployee();
 
-    service.filter.mockResolvedValue(Result.ok([employee]));
+    service.find.mockResolvedValue(Result.ok([employee]));
 
     const result = await applicationService.all();
 
     expect(result.isSuccess()).toBe(true);
-    expect(service.filter).toHaveBeenCalled();
+    expect(service.find).toHaveBeenCalled();
   });
 
   it('should return error with invalid phone', async () => {
-    service.filter.mockResolvedValue(Result.fail(new Error('invalid')));
+    service.find.mockResolvedValue(Result.fail(new Error('invalid')));
 
     const result = await applicationService.all();
 
     expect(result.isFailure()).toBe(true);
-    expect(service.filter).toHaveBeenCalled();
+    expect(service.find).toHaveBeenCalled();
     expect(result.data).toBe(null);
   });
 });

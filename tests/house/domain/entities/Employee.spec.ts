@@ -5,6 +5,8 @@ import {
 } from '../../../../src/house/domain/entities/Employee';
 import { EmployeeType } from '../../../../src/house/domain/enum/EmployeeType';
 import { EmployeeDTO } from '../../../../src/house/DTO/EmployeeDTO';
+import { Chance as chance } from 'chance';
+import { createHouse } from '../../../utils/house';
 
 describe('Employee', () => {
   describe('create', () => {
@@ -12,6 +14,8 @@ describe('Employee', () => {
       const props: CreateEmployeeProps = {
         name: 'John Doe',
         type: EmployeeType.MANAGER,
+        email: chance().email(),
+        house: createHouse(),
       };
 
       const result = Employee.create(props);
@@ -26,6 +30,8 @@ describe('Employee', () => {
       const props: CreateEmployeeProps = {
         name: '',
         type: EmployeeType.TECHNIQUE,
+        email: chance().email(),
+        house: createHouse(),
       };
 
       const result = Employee.create(props);
@@ -38,6 +44,8 @@ describe('Employee', () => {
       const props: CreateEmployeeProps = {
         name: 'Alice',
         type: 'INVALID_TYPE' as EmployeeType,
+        email: chance().email(),
+        house: createHouse(),
       };
 
       const result = Employee.create(props);
@@ -52,6 +60,8 @@ describe('Employee', () => {
       const employeeDTO: EmployeeDTO = {
         id: uuidv4(),
         name: 'Jane Smith',
+        email: chance().email(),
+        house: createHouse().toDTO(),
         type: EmployeeType.ATTENDANT,
         createdAt: new Date().toISOString(),
         updatedAt: null,

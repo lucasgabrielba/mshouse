@@ -28,6 +28,7 @@ export class EmployeeRepository
   async findById(id: string): Promise<Result<Employee>> {
     const result = await this.findOne({
       where: { id: id.toString() },
+      relations: ['house'],
     });
     if (!result) {
       return Result.fail(new Error('not found'));
@@ -38,7 +39,7 @@ export class EmployeeRepository
 
   async findOneEntity(where: object): Promise<Result<Employee>> {
     try {
-      const result = await this.findOne({ where: where });
+      const result = await this.findOne({ where: where, relations: ['house'] });
       if (!result) {
         return Result.fail(new Error('not found'));
       }
@@ -50,7 +51,7 @@ export class EmployeeRepository
     }
   }
   async findEntity(): Promise<Result<Employee[]>> {
-    const result = await this.find();
+    const result = await this.find({ relations: ['house'], });
     const results = result.map((Employee) => Employee.export());
     return Result.ok(results);
   }
@@ -59,6 +60,7 @@ export class EmployeeRepository
     try {
       const entity = await this.findOne({
         where: { id: instance.id.toString() },
+        relations: ['house'],
       });
       if (!entity) return Result.fail(new Error('invalid'));
       await this.softRemove(entity);

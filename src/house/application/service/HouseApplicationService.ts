@@ -3,7 +3,7 @@ import { AbstractApplicationService } from '../../../../kernel/application/servi
 import { isUUID } from '../../../../kernel/isUUID/isUUID';
 import { HouseDTOPrimitive } from '../../DTO/HouseDTO';
 import { HouseDomainService } from '../../domain/domainService/HouseDomainService';
-import { CreateHousePropsPrimitive, House } from '../../domain/entities/House';
+import { CreateHousePropsPrimitive, House, UpdateHousePropsPrimitive } from '../../domain/entities/House';
 
 export class HouseApplicationService extends AbstractApplicationService<
   House,
@@ -15,11 +15,65 @@ export class HouseApplicationService extends AbstractApplicationService<
     super(manager);
   }
 
+  async create(data: CreateHousePropsPrimitive): Promise<Result<House>> {
+    const houseExist = await this.get({ email: data.email });
+
+    if (houseExist.isSuccess()) {
+      return Result.fail(new Error('Email já cadastrado para um empresa'));
+    }
+
+    const result = await this.manager.createAndSave(data);
+
+    if (result.isFailure()) {
+      return Result.fail(result.error);
+    }
+
+    return result;
+  }
+
+  async updateEntity(
+    id: string,
+    data: UpdateHousePropsPrimitive,
+  ): Promise<Result<House>> {
+    const entity = await this.getById(id);
+
+    if (entity.isFailure()) {
+      return Result.fail(entity.error);
+    }
+
+    const updateData = {
+      ...entity.data.toDTO(),
+      ...data,
+    };
+
+    const built = await this.manager.build(updateData);
+
+    if (built.isFailure()) {
+      return Result.fail(
+        new Error(
+          `Não foi possível construir "${this.getModelLabel()}"` +
+          ' a partir dos dados informados.',
+        ),
+      );
+    }
+
+    const instance = built.data;
+    const saved = await this.manager.save(instance);
+
+    if (saved.isFailure()) {
+      return Result.fail(
+        new Error(`Não foi possível salvar "${this.getModelLabel()}".`),
+      );
+    }
+
+    return Result.ok(instance);
+  }
+
   async getById(id: string): Promise<Result<House>> {
     const isValid = isUUID(id);
 
     if (!isValid) {
-      return Result.fail(new Error('O id fornecido não é válido.'));
+      return Result.fail(new Error('O id fornecido de empresa não é válido.'));
     }
 
     const retrieved = await this.manager.get(id);
@@ -32,11 +86,13 @@ export class HouseApplicationService extends AbstractApplicationService<
     return Result.ok<House>(retrieved.data);
   }
 
-  async all(where?: object): Promise<Result<House[]>> {
-    return this.filter(where as any);
+  async all(): Promise<Result<House[]>> {
+    const result = await this.manager.find();
+
+    return result
   }
 
-  async filter(where: object): Promise<Result<House[]>> {
+  async filter(where?: object): Promise<Result<House[]>> {
     const fetched = await this.manager.filter(where);
 
     if (fetched.isFailure()) {

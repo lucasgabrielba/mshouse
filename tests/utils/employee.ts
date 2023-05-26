@@ -38,6 +38,7 @@ export const createEmployeeDTO = (
 
   return {
     name: chance().name(),
+    email: chance().email(),
     type: employeeType,
     house: {
       ...createHouseDTO(),
@@ -94,6 +95,7 @@ export const createORMEmployee = (
     entity.id = Employee.id.toString();
 
     entity.name = Employee.name;
+    entity.email = Employee.email;
     entity.type = Employee.type;
     entity.house = ORMHouse.import(Employee.house);
 
@@ -107,6 +109,7 @@ export const createORMEmployee = (
   entity.id = chance().guid({ version: 4 });
 
   entity.name = chance().name();
+  entity.email = chance().email();
   entity.type = employeeType;
   entity.house = ORMHouse.import(house);
 

@@ -24,6 +24,17 @@ export class HouseDomainService extends AbstractDomainService<
     return Result.ok<House>(created.data);
   }
 
+  async find(): Promise<Result<House[]>> {
+    const fetched = await this.repository.findEntity();
+
+    if (fetched.isFailure()) {
+      return Result.fail(fetched.error);
+    }
+
+    return Result.ok(fetched.data);
+  }
+
+
   async update(data: HouseDTO): Promise<Result<House>> {
     const built = await this.build(data);
 

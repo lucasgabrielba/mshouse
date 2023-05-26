@@ -1,7 +1,7 @@
 import { EmployeeEntrypoint } from '../../../src/web/house/entrypoint/employee.entrypoint';
 import { MockProxy, mock, mockReset } from 'jest-mock-extended';
 import { EmployeeApplicationService } from '../../../src/house/application/service/EmployeeApplicationService';
-import { createEmployee, createEmployeeDTO } from '../../utils/employee';
+import { createEmployee } from '../../utils/employee';
 import { Result } from '../../../kernel/Result/Result';
 import { Employee } from '../../../src/house/domain/entities/Employee';
 import { EmployeeService } from '../../../src/web/house/employee/employee.service';
@@ -83,6 +83,8 @@ describe('create', () => {
     const data = {
       name: employee.name,
       type: employee.type,
+      email: employee.email,
+      houseId: employee.house.id,
     };
 
     applicationService.create.mockResolvedValue(Result.ok(employee));
@@ -98,6 +100,8 @@ describe('create', () => {
     const data = {
       name: '',
       type: EmployeeType.ATTENDANT,
+      email: '',
+      houseId: ''
     };
 
     applicationService.create.mockResolvedValue(
@@ -121,14 +125,12 @@ describe('update', () => {
       type: employee.type,
     };
 
-    applicationService.getById.mockResolvedValue(Result.ok(employee));
-    applicationService.update.mockResolvedValue(Result.ok(employee));
+    applicationService.updateEntity.mockResolvedValue(Result.ok(employee));
 
     const result = await service.update(employee.id, data);
 
     expect(result.isSuccess()).toBe(true);
-    expect(applicationService.getById).toHaveBeenCalled();
-    expect(applicationService.update).toHaveBeenCalled();
+    expect(applicationService.updateEntity).toHaveBeenCalled();
     expect(result.data).toBeInstanceOf(Employee);
   });
 
@@ -138,35 +140,14 @@ describe('update', () => {
       type: EmployeeType.ATTENDANT,
     };
 
-    applicationService.getById.mockResolvedValue(
+    applicationService.updateEntity.mockResolvedValue(
       Result.fail(new Error('error')),
     );
 
     const result = await service.update(chance().guid({ version: 4 }), data);
 
     expect(result.isFailure()).toBe(true);
-    expect(applicationService.getById).toHaveBeenCalled();
-    expect(result.data).toBe(null);
-  });
-
-  it('should return error invalid data', async () => {
-    const employee = createEmployee();
-
-    const data = {
-      name: '',
-      type: EmployeeType.ATTENDANT,
-    };
-
-    applicationService.getById.mockResolvedValue(Result.ok(employee));
-    applicationService.update.mockResolvedValue(
-      Result.fail(new Error('error')),
-    );
-
-    const result = await service.update(chance().guid({ version: 4 }), data);
-
-    expect(result.isFailure()).toBe(true);
-    expect(applicationService.getById).toHaveBeenCalled();
-    expect(applicationService.update).toHaveBeenCalled();
+    expect(applicationService.updateEntity).toHaveBeenCalled();
     expect(result.data).toBe(null);
   });
 });
