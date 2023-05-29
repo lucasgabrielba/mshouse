@@ -1,14 +1,14 @@
 import { Module, Global } from '@nestjs/common';
-import { HouseRepository } from './HouseRepository';
-import { EmployeeRepository } from './EmployeeRepository';
-import { ORMHouse } from '../entities/ORMHouse';
+import { CompanyRepository } from './CompanyRepository';
+import { UserRepository } from './UserRepository';
+import { ORMCompany } from '../entities/ORMCompany';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ORMEmployee } from '../entities/ORMEmployee';
+import { ORMUser } from '../entities/ORMUser';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([ORMHouse, ORMEmployee])],
-  providers: [HouseRepository, EmployeeRepository],
-  exports: [HouseRepository, EmployeeRepository],
+  imports: [TypeOrmModule.forFeature([ORMCompany, ORMUser])],
+  providers: [CompanyRepository, UserRepository],
+  exports: [CompanyRepository, UserRepository],
 })
 export class RepositoryModule {}

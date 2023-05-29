@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ORMHouse } from './entities/ORMHouse';
-import { ORMEmployee } from './entities/ORMEmployee';
+import { ORMCompany } from './entities/ORMCompany';
+import { ORMUser } from './entities/ORMUser';
 import { ORMModule } from './entities/orm.module';
 
 @Module({
@@ -19,7 +19,7 @@ import { ORMModule } from './entities/orm.module';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [ORMHouse, ORMEmployee],
+        entities: [ORMCompany, ORMUser],
         synchronize: true,
       }),
       inject: [ConfigService],
