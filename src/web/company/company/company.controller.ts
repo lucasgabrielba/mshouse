@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { CompanyDTO } from '../../../company/DTO/CompanyDTO';
 import {
@@ -15,8 +16,10 @@ import {
 } from '../../../company/domain/entities/Company';
 import { CompanyService } from './company.service';
 import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('company')
+@UseGuards(AuthGuard('jwt'))
 export class CompanyController {
   constructor(private readonly service: CompanyService) {}
 

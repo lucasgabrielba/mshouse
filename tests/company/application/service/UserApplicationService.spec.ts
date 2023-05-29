@@ -40,6 +40,7 @@ describe('create', () => {
       name: chance().name(),
       type: chance().pickone(userType),
       email: chance().email(),
+      password: chance().hash(),
       companyId: company.id
     };
 
@@ -61,6 +62,7 @@ describe('create', () => {
       name: '',
       type: chance().pickone(userType),
       email: chance().email(),
+      password: chance().hash(),
       companyId: company.id,
     };
 

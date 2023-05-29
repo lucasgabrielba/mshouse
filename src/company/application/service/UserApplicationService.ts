@@ -1,3 +1,4 @@
+import { hashSync } from 'bcrypt';
 import { Result } from '../../../../kernel/Result/Result';
 import { AbstractApplicationService } from '../../../../kernel/application/service/AbstactApplicationService';
 import { isUUID } from '../../../../kernel/isUUID/isUUID';
@@ -65,6 +66,9 @@ export class UserApplicationService extends AbstractApplicationService<
     const updateData = {
       ...entity.data.toDTO(),
       ...data,
+      password: data.password
+        ? hashSync(data.password, 10)
+        : entity.data.password,
     };
 
     const built = await this.manager.build(updateData);
@@ -90,6 +94,7 @@ export class UserApplicationService extends AbstractApplicationService<
     return Result.ok(instance);
   }
 
+
   async getById(id: string): Promise<Result<User>> {
     const isValid = isUUID(id);
 
@@ -105,6 +110,18 @@ export class UserApplicationService extends AbstractApplicationService<
     }
 
     return Result.ok(retrieved.data);
+  }
+
+  async findByEmail(email: string): Promise<Result<User>> {
+    const result = await this.get(
+      { email: email }
+    )
+
+    if (result.isFailure()) {
+      return Result.fail(new Error('E-mail ou senha inválida'))
+    }
+
+    return result
   }
 
   async get(where: object): Promise<Result<User>> {

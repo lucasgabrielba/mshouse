@@ -6,6 +6,7 @@ export interface UserDTO extends AuditableDTO {
   id: string;
   name: string;
   email: string;
+  password: string;
   type: UserType;
   company: CompanyDTO;
 }

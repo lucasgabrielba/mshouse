@@ -39,6 +39,7 @@ export const createUserDTO = (
   return {
     name: chance().name(),
     email: chance().email(),
+    password: chance().hash(),
     type: userType,
     company: {
       ...createCompanyDTO(),

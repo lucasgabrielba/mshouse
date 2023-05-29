@@ -26,6 +26,10 @@ export class UserService {
     return await this.applicationService.getById(id);
   }
 
+  async findByEmail(email: string): Promise<Result<User>> {
+    return await this.applicationService.findByEmail(email);
+  }
+
   async create(data: CreateUserPropsPrimitive): Promise<Result<User>> {
     return await this.applicationService.create(data);
   }

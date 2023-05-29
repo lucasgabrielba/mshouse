@@ -8,10 +8,12 @@ import {
 } from '../../../../kernel/domain/entity/Auditable';
 import { UserType } from '../enum/UserType';
 import { Company } from './Company';
+import { hashSync } from 'bcrypt';
 
 export interface CreateUserPropsPrimitive {
   name: string;
   email: string;
+  password: string;
   type: UserType;
   companyId: string;
 }
@@ -22,6 +24,7 @@ export interface UpdateUserPropsPrimitive
 export interface CreateUserProps {
   name: string;
   email: string;
+  password: string;
   type: UserType;
   company: Company;
 }
@@ -43,6 +46,10 @@ export class User extends Auditable {
     return this.props.email;
   }
 
+  get password(): string {
+    return this.props.password;
+  }
+
   get type(): UserType {
     return this.props.type;
   }
@@ -56,6 +63,7 @@ export class User extends Auditable {
       id: v4(),
       name: props.name,
       email: props.email,
+      password: hashSync(props.password, 10),
       type: UserType[props.type],
       company: props.company,
       createdAt: new Date(),
@@ -76,6 +84,7 @@ export class User extends Auditable {
       id: props.id ?? v4(),
       name: props.name,
       email: props.email,
+      password: props.password,
       type: UserType[props.type],
       company: Company.reconstitute(props.company).data,
       createdAt: props.createdAt ? new Date(props.createdAt) : undefined,
@@ -95,6 +104,7 @@ export class User extends Auditable {
       id: Joi.string().uuid().required(),
       name: Joi.string().min(1).max(255).required(),
       email: Joi.string().email().min(1).max(255).required(),
+      password: Joi.string().min(8).max(255).required(),
       type: Joi.string()
         .valid(
           UserType.MANAGER,
@@ -122,6 +132,7 @@ export class User extends Auditable {
       id: this.id,
       name: this.name,
       email: this.email,
+      password: this.password,
       type: this.type,
       company: this.company.toDTO(),
       createdAt: this.createdAt.toISOString(),

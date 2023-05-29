@@ -23,6 +23,7 @@ describe('Create User', () => {
       name: 'test',
       type: UserType.MANAGER,
       email: chance().email(),
+      password: chance().hash(),
       company: createCompany(),
     };
 

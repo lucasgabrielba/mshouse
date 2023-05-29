@@ -84,6 +84,7 @@ describe('create', () => {
       name: user.name,
       type: user.type,
       email: user.email,
+      password: user.password,
       companyId: user.company.id,
     };
 
@@ -101,6 +102,7 @@ describe('create', () => {
       name: '',
       type: UserType.ATTENDANT,
       email: '',
+      password: '',
       companyId: ''
     };
 

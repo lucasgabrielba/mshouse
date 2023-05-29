@@ -16,6 +16,9 @@ export class ORMUser extends ORMBase {
   email: string;
 
   @Column()
+  password: string;
+
+  @Column()
   type: string;
 
   @ManyToOne(() => ORMCompany, (company) => company.users)
@@ -23,12 +26,15 @@ export class ORMUser extends ORMBase {
   @Column()
   companyId: string;
 
+
+
   static import(instance: User): ORMUser {
     const entity = new ORMUser();
     entity.id = instance.id;
 
     entity.name = instance.name;
     entity.email = instance.email;
+    entity.password = instance.password;
     entity.type = instance.type;
     entity.company = ORMCompany.import(instance.company);
 
@@ -45,6 +51,7 @@ export class ORMUser extends ORMBase {
 
       name: this.name,
       email: this.email,
+      password: this.password,
       type: UserType[this.type],
       company: this.company.export().toDTO(),
 

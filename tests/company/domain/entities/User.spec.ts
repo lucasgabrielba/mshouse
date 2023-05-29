@@ -15,6 +15,7 @@ describe('User', () => {
         name: 'John Doe',
         type: UserType.MANAGER,
         email: chance().email(),
+        password: chance().hash(),
         company: createCompany(),
       };
 
@@ -31,6 +32,7 @@ describe('User', () => {
         name: '',
         type: UserType.TECHNIQUE,
         email: chance().email(),
+        password: chance().hash(),
         company: createCompany(),
       };
 
@@ -45,6 +47,7 @@ describe('User', () => {
         name: 'Alice',
         type: 'INVALID_TYPE' as UserType,
         email: chance().email(),
+        password: chance().hash(),
         company: createCompany(),
       };
 
@@ -61,6 +64,7 @@ describe('User', () => {
         id: uuidv4(),
         name: 'Jane Smith',
         email: chance().email(),
+        password: chance().hash(),
         company: createCompany().toDTO(),
         type: UserType.ATTENDANT,
         createdAt: new Date().toISOString(),
