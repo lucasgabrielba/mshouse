@@ -16,4 +16,12 @@ export class AuthController {
     return result
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Post('logout')
+  async logout(@Req() req: any) {
+    const result = await this.authService
+      .removeRefreshToken(req.user.id)
+
+    return result
+  }
 }

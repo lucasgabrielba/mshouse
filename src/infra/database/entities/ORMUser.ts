@@ -32,9 +32,9 @@ export class ORMUser extends ORMBase {
   refresh_token: string;
 
 
-
   static import(instance: User): ORMUser {
     const entity = new ORMUser();
+
     entity.id = instance.id;
 
     entity.name = instance.name;

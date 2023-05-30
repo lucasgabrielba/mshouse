@@ -110,9 +110,8 @@ export class AuthService {
   }
 
   async removeRefreshToken(userId: string) {
-    const result = await this.applicationService.updateEntity(userId, {
-      refresh_token: null
-    });
+    const result = await this.applicationService
+      .updateEntity(userId, { refresh_token: null });
 
     if (result.isFailure()) {
       return result.error

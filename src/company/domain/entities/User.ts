@@ -121,7 +121,7 @@ export class User extends Auditable {
         )
         .required(),
       company: Joi.object().instance(Company).required(),
-      refresh_token: Joi.string().min(8).max(255).optional(),
+      refresh_token: Joi.string().min(8).max(255).optional().allow(null),
       createdAt: Joi.object().instance(Date).required(),
       updatedAt: Joi.object().instance(Date).optional(),
       deletedAt: Joi.object().instance(Date).optional(),

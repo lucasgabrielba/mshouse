@@ -69,6 +69,8 @@ export class UserApplicationService extends AbstractApplicationService<
       password: data.password
         ? hashSync(data.password, 10)
         : entity.data.password,
+      refresh_token: data.refresh_token === null
+        ? null : data.refresh_token
     };
 
     const built = await this.manager.build(updateData);
