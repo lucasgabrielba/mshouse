@@ -4,7 +4,7 @@ import { createUser } from '../../utils/user';
 import { Result } from '../../../kernel/Result/Result';
 import { User } from '../../../src/company/domain/entities/User';
 import { UserService } from '../../../src/web/company/user/user.service';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { UserType } from '../../../src/company/domain/enum/UserType';
 import { UserApplicationService } from '../../../src/company/application/service/UserApplicationService';
 
@@ -68,7 +68,7 @@ describe('findOne', () => {
       Result.fail(new Error('error')),
     );
 
-    const result = await service.findOne(chance().guid({ version: 4 }));
+    const result = await service.findOne(generate().guid({ version: 4 }));
 
     expect(result.isFailure()).toBe(true);
     expect(applicationService.getById).toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe('update', () => {
     const user = createUser();
 
     const data = {
-      name: chance().name(),
+      name: generate().name(),
       type: user.type,
     };
 
@@ -138,7 +138,7 @@ describe('update', () => {
 
   it('should return error invalid id', async () => {
     const data = {
-      name: chance().name(),
+      name: generate().name(),
       type: UserType.ATTENDANT,
     };
 
@@ -146,7 +146,7 @@ describe('update', () => {
       Result.fail(new Error('error')),
     );
 
-    const result = await service.update(chance().guid({ version: 4 }), data);
+    const result = await service.update(generate().guid({ version: 4 }), data);
 
     expect(result.isFailure()).toBe(true);
     expect(applicationService.updateEntity).toHaveBeenCalled();
@@ -172,7 +172,7 @@ describe('delete', () => {
       Result.fail(new Error('error')),
     );
 
-    const result = await service.delete(chance().guid({ version: 4 }));
+    const result = await service.delete(generate().guid({ version: 4 }));
 
     expect(result.isFailure()).toBe(true);
     expect(applicationService.remove).toHaveBeenCalled();

@@ -3,7 +3,7 @@ import { CompanyDomainService } from '../../../../src/company/domain/domainServi
 import { CompanyApplicationService } from '../../../../src/company/application/service/CompanyApplicationService';
 import { Company } from '../../../../src/company/domain/entities/Company';
 import { createCompany } from '../../../utils/company';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { Result } from '../../../../kernel/Result/Result';
 
 let service: MockProxy<CompanyDomainService>;
@@ -21,10 +21,10 @@ afterEach(() => {
 describe('create', () => {
   it('should create an Company', async () => {
     const data = {
-      name: chance().name(),
-      email: chance().email(),
-      phone: chance().phone(),
-      address: chance().address(),
+      name: generate().name(),
+      email: generate().email(),
+      phone: generate().phone(),
+      address: generate().address(),
     };
 
     service.getOne.mockResolvedValue(Result.fail(new Error('')))
@@ -39,9 +39,9 @@ describe('create', () => {
   it('should return an error if missing data', async () => {
     const data = {
       name: '',
-      email: chance().email(),
-      phone: chance().phone(),
-      address: chance().address(),
+      email: generate().email(),
+      phone: generate().phone(),
+      address: generate().address(),
     };
 
     service.getOne.mockResolvedValue(Result.ok(createCompany()))
@@ -71,7 +71,7 @@ describe('getById', () => {
     service.get.mockResolvedValue(Result.fail(new Error('invalid')));
 
     const result = await applicationService.getById(
-      chance().guid({ version: 4 }),
+      generate().guid({ version: 4 }),
     );
 
     expect(result.isFailure()).toBe(true);

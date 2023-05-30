@@ -1,4 +1,4 @@
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { CompanyDTO } from '../../src/company/DTO/CompanyDTO';
 import { Company } from '../../src/company/domain/entities/Company';
 import { ORMCompany } from '../../src/infra/database/entities/ORMCompany';
@@ -14,15 +14,15 @@ export const createCompanyDTO = (): Omit<CompanyDTO, 'id'> => {
   updatedAt.setMilliseconds(0);
 
   return {
-    name: chance().name(),
-    phone: chance().phone(),
-    phone2: chance().phone(),
-    phone3: chance().phone(),
-    email: chance().email(),
-    email2: chance().email(),
-    email3: chance().email(),
-    site: chance().domain(),
-    address: chance().address(),
+    name: generate().name(),
+    phone: generate().phone(),
+    phone2: generate().phone(),
+    phone3: generate().phone(),
+    email: generate().email(),
+    email2: generate().email(),
+    email3: generate().email(),
+    site: generate().domain(),
+    address: generate().address(),
     createdAt: createdAt.toISOString(),
     updatedAt: updatedAt.toISOString(),
     deletedAt: deletedAt.toISOString(),
@@ -67,17 +67,17 @@ export const createORMCompany = (company?: Company): ORMCompany => {
     return entity;
   }
 
-  entity.id = chance().guid({ version: 4 });
+  entity.id = generate().guid({ version: 4 });
 
-  entity.name = chance().name();
-  entity.phone = chance().phone();
-  entity.phone2 = chance().phone();
-  entity.phone3 = chance().phone();
-  entity.email = chance().email();
-  entity.email2 = chance().email();
-  entity.email3 = chance().email();
-  entity.site = chance().domain();
-  entity.address = chance().address();
+  entity.name = generate().name();
+  entity.phone = generate().phone();
+  entity.phone2 = generate().phone();
+  entity.phone3 = generate().phone();
+  entity.email = generate().email();
+  entity.email2 = generate().email();
+  entity.email3 = generate().email();
+  entity.site = generate().domain();
+  entity.address = generate().address();
 
   entity.createdAt = entity.createdAt = new Date();
   entity.updatedAt = new Date();

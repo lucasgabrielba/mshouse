@@ -5,7 +5,7 @@ import {
 } from '../../../../src/company/domain/entities/User';
 import { UserType } from '../../../../src/company/domain/enum/UserType';
 import { UserDTO } from '../../../../src/company/DTO/UserDTO';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { createCompany } from '../../../utils/company';
 
 describe('User', () => {
@@ -14,8 +14,8 @@ describe('User', () => {
       const props: CreateUserProps = {
         name: 'John Doe',
         type: UserType.MANAGER,
-        email: chance().email(),
-        password: chance().hash(),
+        email: generate().email(),
+        password: generate().hash(),
         company: createCompany(),
       };
 
@@ -31,8 +31,8 @@ describe('User', () => {
       const props: CreateUserProps = {
         name: '',
         type: UserType.TECHNIQUE,
-        email: chance().email(),
-        password: chance().hash(),
+        email: generate().email(),
+        password: generate().hash(),
         company: createCompany(),
       };
 
@@ -46,8 +46,8 @@ describe('User', () => {
       const props: CreateUserProps = {
         name: 'Alice',
         type: 'INVALID_TYPE' as UserType,
-        email: chance().email(),
-        password: chance().hash(),
+        email: generate().email(),
+        password: generate().hash(),
         company: createCompany(),
       };
 
@@ -63,9 +63,10 @@ describe('User', () => {
       const userDTO: UserDTO = {
         id: uuidv4(),
         name: 'Jane Smith',
-        email: chance().email(),
-        password: chance().hash(),
+        email: generate().email(),
+        password: generate().hash(),
         company: createCompany().toDTO(),
+        refresh_token: generate().hash(),
         type: UserType.ATTENDANT,
         createdAt: new Date().toISOString(),
         updatedAt: null,

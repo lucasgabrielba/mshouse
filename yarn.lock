@@ -993,7 +993,7 @@
     "tslib" "2.5.2"
     "uid" "2.0.2"
 
-"@nestjs/config@^2.3.1":
+"@nestjs/config@^2.3.2":
   "integrity" "sha512-VtGV8PBpxzMzz68kdxTWqPm9v7SYCSZXQ0tC72AMNnjdmU+CVjUSLpEpdnm0XcWHxE1nV6wSI3HZxsATIV4ZxA=="
   "resolved" "https://registry.npmjs.org/@nestjs/config/-/config-2.3.2.tgz"
   "version" "2.3.2"

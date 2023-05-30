@@ -2,7 +2,7 @@ import { mock, mockClear, MockProxy } from 'jest-mock-extended';
 import { CompanyRepositoryInterface } from '../../../../src/company/domain/repository/CompanyRepositoryInterface';
 import { CompanyDomainService } from '../../../../src/company/domain/domainService/CompanyDomainService';
 import { Company } from '../../../../src/company/domain/entities/Company';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { createCompanyDTO } from '../../../utils/company';
 
 let repository: MockProxy<CompanyRepositoryInterface>;
@@ -28,7 +28,7 @@ describe('Create Company', () => {
 
   describe('Build Company', () => {
     it('Should build a Company', async () => {
-      const dto = { ...createCompanyDTO(), id: chance().guid({ version: 4 }) };
+      const dto = { ...createCompanyDTO(), id: generate().guid({ version: 4 }) };
 
       const service = new CompanyDomainService(repository);
       const result = await service.build(dto);

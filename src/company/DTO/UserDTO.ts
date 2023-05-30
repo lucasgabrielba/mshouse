@@ -9,6 +9,7 @@ export interface UserDTO extends AuditableDTO {
   password: string;
   type: UserType;
   company: CompanyDTO;
+  refresh_token: string;
 }
 
 export interface UserDTOPrimitive extends UserDTO {}

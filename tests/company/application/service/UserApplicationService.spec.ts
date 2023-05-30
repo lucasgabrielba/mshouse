@@ -2,7 +2,7 @@ import { mock, MockProxy, mockReset } from 'jest-mock-extended';
 import { UserDomainService } from '../../../../src/company/domain/domainService/UserDomainService';
 import { User } from '../../../../src/company/domain/entities/User';
 import { createUser } from '../../../utils/user';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { UserType } from '../../../../src/company/domain/enum/UserType';
 import { Result } from '../../../../kernel/Result/Result';
 import { CompanyApplicationService } from '../../../../src/company/application/service/CompanyApplicationService';
@@ -37,10 +37,10 @@ describe('create', () => {
     const company = createCompany()
 
     const data = {
-      name: chance().name(),
-      type: chance().pickone(userType),
-      email: chance().email(),
-      password: chance().hash(),
+      name: generate().name(),
+      type: generate().pickone(userType),
+      email: generate().email(),
+      password: generate().hash(),
       companyId: company.id
     };
 
@@ -60,9 +60,9 @@ describe('create', () => {
 
     const data = {
       name: '',
-      type: chance().pickone(userType),
-      email: chance().email(),
-      password: chance().hash(),
+      type: generate().pickone(userType),
+      email: generate().email(),
+      password: generate().hash(),
       companyId: company.id,
     };
 
@@ -94,7 +94,7 @@ describe('getById', () => {
     service.get.mockResolvedValue(Result.fail(new Error('invalid')));
 
     const result = await applicationService.getById(
-      chance().guid({ version: 4 }),
+      generate().guid({ version: 4 }),
     );
 
     expect(result.isFailure()).toBe(true);

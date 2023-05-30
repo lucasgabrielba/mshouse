@@ -3,7 +3,7 @@ import { UserRepositoryInterface } from '../../../../src/company/domain/reposito
 import { UserDomainService } from '../../../../src/company/domain/domainService/UserDomainService';
 import { UserType } from '../../../../src/company/domain/enum/UserType';
 import { User } from '../../../../src/company/domain/entities/User';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { createUserDTO } from '../../../utils/user';
 import { createCompany } from '../../../utils/company';
 
@@ -22,8 +22,8 @@ describe('Create User', () => {
     const data = {
       name: 'test',
       type: UserType.MANAGER,
-      email: chance().email(),
-      password: chance().hash(),
+      email: generate().email(),
+      password: generate().hash(),
       company: createCompany(),
     };
 
@@ -38,7 +38,7 @@ describe('Create User', () => {
     it('Should build a User', async () => {
       const dto = {
         ...createUserDTO('manager'),
-        id: chance().guid({ version: 4 }),
+        id: generate().guid({ version: 4 }),
       };
 
       const service = new UserDomainService(repository);

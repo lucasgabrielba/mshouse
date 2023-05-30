@@ -16,6 +16,7 @@ export interface CreateUserPropsPrimitive {
   password: string;
   type: UserType;
   companyId: string;
+  refresh_token?: string;
 }
 
 export interface UpdateUserPropsPrimitive
@@ -27,6 +28,7 @@ export interface CreateUserProps {
   password: string;
   type: UserType;
   company: Company;
+  refresh_token?: string;
 }
 
 export interface UserProps extends CreateUserProps, AuditableProps {}
@@ -58,6 +60,10 @@ export class User extends Auditable {
     return this.props.company;
   }
 
+  get refresh_token(): string {
+    return this.props.refresh_token;
+  }
+
   static create(props: CreateUserProps): Result<User> {
     const validated = User.validate({
       id: v4(),
@@ -66,6 +72,7 @@ export class User extends Auditable {
       password: hashSync(props.password, 10),
       type: UserType[props.type],
       company: props.company,
+      refresh_token: props.refresh_token,
       createdAt: new Date(),
       updatedAt: undefined,
       deletedAt: undefined,
@@ -87,6 +94,7 @@ export class User extends Auditable {
       password: props.password,
       type: UserType[props.type],
       company: Company.reconstitute(props.company).data,
+      refresh_token: props.refresh_token,
       createdAt: props.createdAt ? new Date(props.createdAt) : undefined,
       updatedAt: props.updatedAt ? new Date(props.updatedAt) : undefined,
       deletedAt: props.deletedAt ? new Date(props.deletedAt) : undefined,
@@ -113,6 +121,7 @@ export class User extends Auditable {
         )
         .required(),
       company: Joi.object().instance(Company).required(),
+      refresh_token: Joi.string().min(8).max(255).optional(),
       createdAt: Joi.object().instance(Date).required(),
       updatedAt: Joi.object().instance(Date).optional(),
       deletedAt: Joi.object().instance(Date).optional(),
@@ -135,6 +144,7 @@ export class User extends Auditable {
       password: this.password,
       type: this.type,
       company: this.company.toDTO(),
+      refresh_token: this.refresh_token,
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt ? this.updatedAt.toISOString() : null,
       deletedAt: this.props.deletedAt

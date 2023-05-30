@@ -2,7 +2,7 @@ import { MockProxy, mock, mockReset } from 'jest-mock-extended';
 import { CompanyApplicationService } from '../../../src/company/application/service/CompanyApplicationService';
 import { Result } from '../../../kernel/Result/Result';
 import { Company } from '../../../src/company/domain/entities/Company';
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { CompanyService } from '../../../src/web/company/company/company.service';
 import { createCompany } from '../../utils/company';
 import { CompanyEntrypoint } from '../../../src/web/company/entrypoint/company.entrypoint';
@@ -66,7 +66,7 @@ describe('findOne', () => {
       Result.fail(new Error('error')),
     );
 
-    const result = await service.findOne(chance().guid({ version: 4 }));
+    const result = await service.findOne(generate().guid({ version: 4 }));
 
     expect(result.isFailure()).toBe(true);
     expect(applicationService.getById).toHaveBeenCalled();
@@ -119,8 +119,8 @@ describe('update', () => {
     const company = createCompany();
 
     const data = {
-      name: chance().name(),
-      phone: chance().phone(),
+      name: generate().name(),
+      phone: generate().phone(),
       email: company.email,
       address: company.address,
     };
@@ -136,17 +136,17 @@ describe('update', () => {
 
   it('should return error invalid id', async () => {
     const data = {
-      name: chance().name(),
-      phone: chance().phone(),
-      email: chance().email(),
-      address: chance().address(),
+      name: generate().name(),
+      phone: generate().phone(),
+      email: generate().email(),
+      address: generate().address(),
     };
 
     applicationService.updateEntity.mockResolvedValue(
       Result.fail(new Error('error')),
     );
 
-    const result = await service.update(chance().guid({ version: 4 }), data);
+    const result = await service.update(generate().guid({ version: 4 }), data);
 
     expect(result.isFailure()).toBe(true);
     expect(applicationService.updateEntity).toHaveBeenCalled();
@@ -171,7 +171,7 @@ describe('update', () => {
         Result.fail(new Error('error')),
       );
 
-      const result = await service.delete(chance().guid({ version: 4 }));
+      const result = await service.delete(generate().guid({ version: 4 }));
 
       expect(result.isFailure()).toBe(true);
       expect(applicationService.remove).toHaveBeenCalled();

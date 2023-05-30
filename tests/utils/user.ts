@@ -1,4 +1,4 @@
-import { Chance as chance } from 'chance';
+import { Chance as generate } from 'chance';
 import { UserDTO } from '../../src/company/DTO/UserDTO';
 import { UserType } from '../../src/company/domain/enum/UserType';
 import { User } from '../../src/company/domain/entities/User';
@@ -20,7 +20,7 @@ export const createUserDTO = (
     userType = UserType.TECHNIQUE;
   }
   if (!type) {
-    userType = chance().pickone([
+    userType = generate().pickone([
       UserType.MANAGER,
       UserType.ATTENDANT,
       UserType.TECHNIQUE,
@@ -37,14 +37,15 @@ export const createUserDTO = (
   updatedAt.setMilliseconds(0);
 
   return {
-    name: chance().name(),
-    email: chance().email(),
-    password: chance().hash(),
+    name: generate().name(),
+    email: generate().email(),
+    password: generate().hash(),
     type: userType,
     company: {
       ...createCompanyDTO(),
-      id: chance().guid({ version: 4 }),
+      id: generate().guid({ version: 4 }),
     },
+    refresh_token: generate().hash(),
     createdAt: createdAt.toISOString(),
     updatedAt: updatedAt.toISOString(),
     deletedAt: deletedAt.toISOString(),
@@ -107,10 +108,10 @@ export const createORMUser = (
 
   const company = createCompany();
 
-  entity.id = chance().guid({ version: 4 });
+  entity.id = generate().guid({ version: 4 });
 
-  entity.name = chance().name();
-  entity.email = chance().email();
+  entity.name = generate().name();
+  entity.email = generate().email();
   entity.type = userType;
   entity.company = ORMCompany.import(company);
 
