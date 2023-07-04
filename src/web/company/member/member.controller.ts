@@ -9,41 +9,35 @@ import {
   Res,
   UseGuards,
   Req,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { CompanyDTO } from '../../../company/DTO/CompanyDTO';
+import { MemberDTO } from '../../../company/DTO/MemberDTO';
 import {
-  CreateCompanyPropsPrimitive,
-  UpdateCompanyPropsPrimitive,
-} from '../../../company/domain/entities/Company';
-import { CompanyService } from './company.service';
+  CreateMemberPropsPrimitive,
+  UpdateMemberPropsPrimitive,
+} from '../../../company/domain/entities/Member';
+import { MemberService } from './member.service';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
-@Controller('company')
+@Controller('member')
 @UseGuards(AuthGuard('jwt'))
-export class CompanyController {
-  constructor(private readonly service: CompanyService) {}
+export class MemberController {
+  constructor(private readonly service: MemberService) {}
 
   @Get()
-  async findAll(@Res() res: Response, @Req() req: any): Promise<CompanyDTO[]> {
-    const result = await this.service.listAllCompany(req.member.type);
+  async findAll(@Res() res: Response, @Req() req: any): Promise<MemberDTO[]> {
+    const result = await this.service.listAllMember(req.member.type);
 
     if (result.isFailure()) {
-      res.status(400).json({ error: result.error.message });
+      res
+        .status(500)
+        .json({ error: result.error.message });
       return;
-    }
-
-    const allEntities: CompanyDTO[] = []
-    for (const company of result.data) {
-      if (company) {
-        allEntities.push(company.toDTO())
-      }
     }
 
     res
       .status(200)
-      .send(allEntities)
+      .send(result.data.map((Member) => Member.toDTO()))
 
     return
   }
@@ -52,14 +46,12 @@ export class CompanyController {
   async findOne(
     @Param('id') id: string,
     @Res() res: Response,
-    @Req() req: any,
-  ): Promise<CompanyDTO> {
+    @Req() req: any
+  ): Promise<MemberDTO> {
     const result = await this.service.findOne(id, req.member.type);
 
     if (result.isFailure()) {
-      res
-        .status(400)
-        .json({ error: result.error.message });
+      res.json({ error: result.error.message });
       return;
     }
 
@@ -69,30 +61,35 @@ export class CompanyController {
 
   @Post()
   async create(
-    @Body() data: CreateCompanyPropsPrimitive,
+    @Body() data: CreateMemberPropsPrimitive,
     @Res() res: Response,
-    @Req() req: any,
-  ): Promise<CompanyDTO> {
-
-    const result = await this.service.create(data, req.member.type);
-
+    @Req() req: any
+  ): Promise<MemberDTO> {
+    const createData = {
+      ...data,
+      companyId: data.companyId ?? req.member.companyId
+    }
+    const result = await this.service.create(createData, req.member.type);
     if (result.isFailure()) {
       res
         .status(400)
         .json({ error: result.error.message });
       return;
     }
-    res.status(200).send(result.data)
+
+    res
+      .status(200)
+      .send(result.data)
     return
   }
 
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() data: UpdateCompanyPropsPrimitive,
+    @Body() data: UpdateMemberPropsPrimitive,
     @Res() res: Response,
-    @Req() req: any,
-  ): Promise<CompanyDTO> {
+    @Req() req: any
+  ): Promise<MemberDTO> {
 
     const result = await this.service.update(id, data, req.member.type);
 
@@ -103,7 +100,9 @@ export class CompanyController {
       return;
     }
 
-    res.status(200).send(result.data.toDTO())
+    res
+      .status(200)
+      .send(result.data.toDTO())
     return
   }
 
@@ -111,7 +110,7 @@ export class CompanyController {
   async delete(
     @Param('id') id: string,
     @Res() res: Response,
-    @Req() req: any,
+    @Req() req: any
   ): Promise<boolean> {
 
     const result = await this.service.delete(id, req.member.type);

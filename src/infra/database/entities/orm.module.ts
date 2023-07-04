@@ -1,10 +1,10 @@
 import { Module, Global } from '@nestjs/common';
 import { ORMCompany } from './ORMCompany';
-import { ORMUser } from './ORMUser';
+import { ORMMember } from './ORMMember';
 
 @Global()
 @Module({
-  providers: [ORMCompany, ORMUser],
-  exports: [ORMCompany, ORMUser],
+  providers: [ORMCompany, ORMMember],
+  exports: [ORMCompany, ORMMember],
 })
 export class ORMModule {}

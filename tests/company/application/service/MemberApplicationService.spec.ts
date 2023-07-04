@@ -1,44 +1,44 @@
 import { mock, MockProxy, mockReset } from 'jest-mock-extended';
-import { UserDomainService } from '../../../../src/company/domain/domainService/UserDomainService';
-import { User } from '../../../../src/company/domain/entities/User';
-import { createUser } from '../../../utils/user';
+import { MemberDomainService } from '../../../../src/company/domain/domainService/MemberDomainService';
+import { Member } from '../../../../src/company/domain/entities/Member';
+import { createMember } from '../../../utils/member';
 import { Chance as generate } from 'chance';
-import { UserType } from '../../../../src/company/domain/enum/UserType';
+import { MemberType } from '../../../../src/company/domain/enum/MemberType';
 import { Result } from '../../../../kernel/Result/Result';
 import { CompanyApplicationService } from '../../../../src/company/application/service/CompanyApplicationService';
 import { createCompany } from '../../../utils/company';
-import { UserApplicationService } from '../../../../src/company/application/service/UserApplicationService';
+import { MemberApplicationService } from '../../../../src/company/application/service/MemberApplicationService';
 
-let service: MockProxy<UserDomainService>;
-let applicationService: UserApplicationService;
+let service: MockProxy<MemberDomainService>;
+let applicationService: MemberApplicationService;
 
 let companyApplicationService: MockProxy<CompanyApplicationService>;
 
 beforeEach(() => {
   companyApplicationService = mock<CompanyApplicationService>()
 
-  service = mock<UserDomainService>();
-  applicationService = new UserApplicationService(service, companyApplicationService);
+  service = mock<MemberDomainService>();
+  applicationService = new MemberApplicationService(service, companyApplicationService);
 });
 
 afterEach(() => {
   mockReset(service);
 });
 
-const userType = [
-  UserType.MANAGER,
-  UserType.ATTENDANT,
-  UserType.TECHNIQUE,
+const memberType = [
+  MemberType.MANAGER,
+  MemberType.ATTENDANT,
+  MemberType.TECHNIQUE,
 ];
 
 describe('create', () => {
-  it('should create an user', async () => {
-    const user = createUser()
+  it('should create an member', async () => {
+    const member = createMember()
     const company = createCompany()
 
     const data = {
       name: generate().name(),
-      type: generate().pickone(userType),
+      type: generate().pickone(memberType),
       email: generate().email(),
       password: generate().hash(),
       companyId: company.id
@@ -46,27 +46,27 @@ describe('create', () => {
 
     service.getOne.mockResolvedValue(Result.fail(new Error('')));
     companyApplicationService.getById.mockResolvedValue(Result.ok(company))
-    service.createAndSave.mockResolvedValue(Result.ok(user));
+    service.createAndSave.mockResolvedValue(Result.ok(member));
 
     const result = await applicationService.create(data);
 
     expect(result.isSuccess()).toBe(true);
-    expect(result.data).toBeInstanceOf(User);
+    expect(result.data).toBeInstanceOf(Member);
   });
 
   it('should return an error if missing data', async () => {
-    const user = createUser()
+    const member = createMember()
     const company = createCompany()
 
     const data = {
       name: '',
-      type: generate().pickone(userType),
+      type: generate().pickone(memberType),
       email: generate().email(),
       password: generate().hash(),
       companyId: company.id,
     };
 
-    service.getOne.mockResolvedValue(Result.ok(user));
+    service.getOne.mockResolvedValue(Result.ok(member));
     companyApplicationService.getById.mockResolvedValue(Result.ok(company))
     service.createAndSave.mockResolvedValue(Result.fail(new Error('')));
 
@@ -78,16 +78,16 @@ describe('create', () => {
 });
 
 describe('getById', () => {
-  it('should return an user by ID', async () => {
-    const user = createUser();
+  it('should return an member by ID', async () => {
+    const member = createMember();
 
-    service.get.mockResolvedValue(Result.ok(user));
+    service.get.mockResolvedValue(Result.ok(member));
 
-    const result = await applicationService.getById(user.id);
+    const result = await applicationService.getById(member.id);
 
     expect(result.isSuccess()).toBe(true);
     expect(service.get).toHaveBeenCalled();
-    expect(result.data).toBeInstanceOf(User);
+    expect(result.data).toBeInstanceOf(Member);
   });
 
   it('should return error with invalid ID', async () => {
@@ -104,18 +104,18 @@ describe('getById', () => {
 });
 
 describe('get', () => {
-  it('should return an user by name', async () => {
-    const user = createUser();
+  it('should return an member by name', async () => {
+    const member = createMember();
 
-    service.getOne.mockResolvedValue(Result.ok(user));
+    service.getOne.mockResolvedValue(Result.ok(member));
 
     const result = await applicationService.get({
-      where: { name: user.name },
+      where: { name: member.name },
     });
 
     expect(result.isSuccess()).toBe(true);
     expect(service.getOne).toHaveBeenCalled();
-    expect(result.data).toBeInstanceOf(User);
+    expect(result.data).toBeInstanceOf(Member);
   });
 
   it('should return error with invalid name', async () => {
@@ -130,18 +130,18 @@ describe('get', () => {
     expect(result.data).toBe(null);
   });
 
-  it('should return an user by email', async () => {
-    const user = createUser();
+  it('should return an member by email', async () => {
+    const member = createMember();
 
-    service.getOne.mockResolvedValue(Result.ok(user));
+    service.getOne.mockResolvedValue(Result.ok(member));
 
     const result = await applicationService.get({
-      where: { email: user.name },
+      where: { email: member.name },
     });
 
     expect(result.isSuccess()).toBe(true);
     expect(service.getOne).toHaveBeenCalled();
-    expect(result.data).toBeInstanceOf(User);
+    expect(result.data).toBeInstanceOf(Member);
   });
 
   it('should return error with invalid email', async () => {
@@ -156,18 +156,18 @@ describe('get', () => {
     expect(result.data).toBe(null);
   });
 
-  it('should return an user by phone', async () => {
-    const user = createUser();
+  it('should return an member by phone', async () => {
+    const member = createMember();
 
-    service.getOne.mockResolvedValue(Result.ok(user));
+    service.getOne.mockResolvedValue(Result.ok(member));
 
     const result = await applicationService.get({
-      where: { phone: user.name },
+      where: { phone: member.name },
     });
 
     expect(result.isSuccess()).toBe(true);
     expect(service.getOne).toHaveBeenCalled();
-    expect(result.data).toBeInstanceOf(User);
+    expect(result.data).toBeInstanceOf(Member);
   });
 
   it('should return error with invalid phone', async () => {
@@ -184,10 +184,10 @@ describe('get', () => {
 });
 
 describe('all', () => {
-  it('should return all users', async () => {
-    const user = createUser();
+  it('should return all members', async () => {
+    const member = createMember();
 
-    service.find.mockResolvedValue(Result.ok([user]));
+    service.find.mockResolvedValue(Result.ok([member]));
 
     const result = await applicationService.all();
 
@@ -207,10 +207,10 @@ describe('all', () => {
 });
 
 describe('filter', () => {
-  it('should return all users by filter', async () => {
-    const user = createUser();
+  it('should return all members by filter', async () => {
+    const member = createMember();
 
-    service.filter.mockResolvedValue(Result.ok([user]));
+    service.filter.mockResolvedValue(Result.ok([member]));
 
     const result = await applicationService.filter({
       where: { phone: '###########' },

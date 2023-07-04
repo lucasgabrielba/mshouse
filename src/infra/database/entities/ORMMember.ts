@@ -1,15 +1,15 @@
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { ORMBase } from './utils/ORMBase';
-import { User } from '../../../company/domain/entities/User';
-import { UserDTO } from '../../../company/DTO/UserDTO';
+import { Member } from '../../../company/domain/entities/Member';
+import { MemberDTO } from '../../../company/DTO/MemberDTO';
 import { Injectable } from '@nestjs/common';
-import { UserType } from '../../../company/domain/enum/UserType';
+import { MemberType } from '../../../company/domain/enum/MemberType';
 import { ORMCompany } from './ORMCompany';
 import { Exclude } from 'class-transformer';
 
 @Injectable()
-@Entity('User')
-export class ORMUser extends ORMBase {
+@Entity('Member')
+export class ORMMember extends ORMBase {
   @Column()
   name: string;
 
@@ -22,7 +22,7 @@ export class ORMUser extends ORMBase {
   @Column()
   type: string;
 
-  @ManyToOne(() => ORMCompany, (company) => company.users)
+  @ManyToOne(() => ORMCompany, (company) => company.members)
   company: ORMCompany;
   @Column()
   companyId: string;
@@ -32,8 +32,8 @@ export class ORMUser extends ORMBase {
   refresh_token: string;
 
 
-  static import(instance: User): ORMUser {
-    const entity = new ORMUser();
+  static import(instance: Member): ORMMember {
+    const entity = new ORMMember();
 
     entity.id = instance.id;
 
@@ -50,14 +50,14 @@ export class ORMUser extends ORMBase {
     return entity;
   }
 
-  export(): User {
-    const dto: UserDTO = {
+  export(): Member {
+    const dto: MemberDTO = {
       id: this.id,
 
       name: this.name,
       email: this.email,
       password: this.password,
-      type: UserType[this.type],
+      type: MemberType[this.type],
       company: this.company.export().toDTO(),
       refresh_token: this.refresh_token ?? undefined,
 
@@ -66,6 +66,6 @@ export class ORMUser extends ORMBase {
       deletedAt: this.deletedAt ? this.deletedAt.toISOString() : null,
     };
 
-    return User.reconstitute(dto).data;
+    return Member.reconstitute(dto).data;
   }
 }

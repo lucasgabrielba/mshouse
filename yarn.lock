@@ -5520,9 +5520,9 @@
   dependencies:
     "path-key" "^3.0.0"
 
-"npm-user-validate@^2.0.0":
+"npm-member-validate@^2.0.0":
   "integrity" "sha512-sSWeqAYJ2dUPStJB+AEj0DyLRltr/f6YNcvCA7phkB8/RMLMnVsQ41GMwHo/ERZLYNDsyB2wPm7pZo1mqPOl7Q=="
-  "resolved" "https://registry.npmjs.org/npm-user-validate/-/npm-user-validate-2.0.0.tgz"
+  "resolved" "https://registry.npmjs.org/npm-member-validate/-/npm-member-validate-2.0.0.tgz"
   "version" "2.0.0"
 
 "npm@^9.6.6":
@@ -5577,7 +5577,7 @@
     "npm-pick-manifest" "^8.0.1"
     "npm-profile" "^7.0.1"
     "npm-registry-fetch" "^14.0.5"
-    "npm-user-validate" "^2.0.0"
+    "npm-member-validate" "^2.0.0"
     "npmlog" "^7.0.1"
     "p-map" "^4.0.0"
     "pacote" "^15.1.3"

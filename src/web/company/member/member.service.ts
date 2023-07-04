@@ -1,23 +1,23 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Result } from '../../../../kernel/Result/Result';
-import { CompanyApplicationService } from '../../../company/application/service/CompanyApplicationService';
+import { MemberApplicationService } from '../../../company/application/service/MemberApplicationService';
 import {
-  CreateCompanyPropsPrimitive,
-  Company,
-  UpdateCompanyPropsPrimitive,
-} from '../../../company/domain/entities/Company';
-import { CompanyEntrypoint } from '../entrypoint/company.entrypoint';
+  CreateMemberPropsPrimitive,
+  Member,
+  UpdateMemberPropsPrimitive,
+} from '../../../company/domain/entities/Member';
+import { MemberEntrypoint } from '../entrypoint/member.entrypoint';
 import { validatePermission } from '../../../../kernel/validatePermission/validatePermission';
 
 @Injectable()
-export class CompanyService {
-  protected applicationService: CompanyApplicationService;
+export class MemberService {
+  protected applicationService: MemberApplicationService;
 
-  constructor(entrypoint: CompanyEntrypoint) {
+  constructor(entrypoint: MemberEntrypoint) {
     this.applicationService = entrypoint.getApplicationService();
   }
 
-  async listAllCompany(actor: string): Promise<Result<Company[]>> {
+  async listAllMember(actor: string): Promise<Result<Member[]>> {
     const ismanager = validatePermission(actor)
     if (!ismanager) {
       return Result.fail(new UnauthorizedException('Voce não possui permissão'))
@@ -27,7 +27,7 @@ export class CompanyService {
     return result;
   }
 
-  async findOne(id: string, actor: string): Promise<Result<Company>> {
+  async findOne(id: string, actor: string): Promise<Result<Member>> {
     const ismanager = validatePermission(actor)
     if (!ismanager) {
       return Result.fail(new UnauthorizedException('Voce não possui permissão'))
@@ -37,7 +37,7 @@ export class CompanyService {
     return result;
   }
 
-  async create(data: CreateCompanyPropsPrimitive, actor: string): Promise<Result<Company>> {
+  async create(data: CreateMemberPropsPrimitive, actor: string): Promise<Result<Member>> {
     const ismanager = validatePermission(actor)
     if (!ismanager) {
       return Result.fail(new UnauthorizedException('Voce não possui permissão'))
@@ -49,9 +49,9 @@ export class CompanyService {
 
   async update(
     id: string,
-    data: UpdateCompanyPropsPrimitive,
+    data: UpdateMemberPropsPrimitive,
     actor: string
-  ): Promise<Result<Company>> {
+  ): Promise<Result<Member>> {
     const ismanager = validatePermission(actor)
     if (!ismanager) {
       return Result.fail(new UnauthorizedException('Voce não possui permissão'))

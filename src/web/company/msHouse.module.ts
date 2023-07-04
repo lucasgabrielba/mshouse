@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { CompanyModule } from './company/company.module';
-import { UserModule } from './user/user.module';
+import { MemberModule } from './member/member.module';
 import { EntrypointModule } from './entrypoint/entrypoint.module';
 import { AuthModule } from 'auth/auth.module';
 
 @Module({
-  imports: [CompanyModule, UserModule, AuthModule],
+  imports: [CompanyModule, MemberModule, AuthModule],
   providers: [EntrypointModule],
-  exports: [CompanyModule, UserModule, AuthModule],
+  exports: [CompanyModule, MemberModule, AuthModule],
 })
 export class MSCompanyModule {}

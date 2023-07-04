@@ -1,35 +1,35 @@
-import { hashSync } from 'bcrypt';
 import { Result } from '../../../../kernel/Result/Result';
 import { AbstractApplicationService } from '../../../../kernel/application/service/AbstactApplicationService';
 import { isUUID } from '../../../../kernel/isUUID/isUUID';
-import { UserDTOPrimitive } from '../../DTO/UserDTO';
-import { UserDomainService } from '../../domain/domainService/UserDomainService';
+import { MemberDTOPrimitive } from '../../DTO/MemberDTO';
+import { MemberDomainService } from '../../domain/domainService/MemberDomainService';
 import {
-  User,
-  CreateUserPropsPrimitive,
-  UpdateUserPropsPrimitive,
-} from '../../domain/entities/User';
+  Member,
+  CreateMemberPropsPrimitive,
+  UpdateMemberPropsPrimitive,
+} from '../../domain/entities/Member';
 import { CompanyApplicationService } from './CompanyApplicationService';
 
-export class UserApplicationService extends AbstractApplicationService<
-  User,
-  UserDTOPrimitive,
-  CreateUserPropsPrimitive,
-  UserDomainService
+export class MemberApplicationService extends AbstractApplicationService<
+  Member,
+  MemberDTOPrimitive,
+  CreateMemberPropsPrimitive,
+  MemberDomainService
 > {
   constructor(
-    readonly manager: UserDomainService,
+    readonly manager: MemberDomainService,
     protected companyApplicationService: CompanyApplicationService,
   ) {
     super(manager);
   }
 
-  async create(data: CreateUserPropsPrimitive): Promise<Result<User>> {
-    const userExist = await this.get(
+  async create(data: CreateMemberPropsPrimitive): Promise<Result<Member>> {
+
+    const memberExist = await this.get(
       { email: data.email },
     );
 
-    if (userExist.isSuccess()) {
+    if (memberExist.isSuccess()) {
       return Result.fail(new Error(`Já existe usuário criado com esse e-mail.`));
     }
 
@@ -42,7 +42,7 @@ export class UserApplicationService extends AbstractApplicationService<
     const createData = {
       ...data,
       company: company.data,
-    };
+    }; delete createData.companyId
 
     const result = await this.manager.createAndSave(createData);
 
@@ -55,19 +55,19 @@ export class UserApplicationService extends AbstractApplicationService<
 
   async updateEntity(
     id: string,
-    data: UpdateUserPropsPrimitive,
-  ): Promise<Result<User>> {
+    data: UpdateMemberPropsPrimitive,
+  ): Promise<Result<Member>> {
     const entity = await this.getById(id);
 
     if (entity.isFailure()) {
-      return Result.fail(new Error('não foi possivel resgatar user'));
+      return Result.fail(new Error('não foi possivel resgatar member'));
     }
 
     const updateData = {
       ...entity.data.toDTO(),
       ...data,
       password: data.password
-        ? hashSync(data.password, 10)
+        ? data.password
         : entity.data.password,
       refresh_token: data.refresh_token === null
         ? null : data.refresh_token
@@ -97,7 +97,7 @@ export class UserApplicationService extends AbstractApplicationService<
   }
 
 
-  async getById(id: string): Promise<Result<User>> {
+  async getById(id: string): Promise<Result<Member>> {
     const isValid = isUUID(id);
 
     if (!isValid) {
@@ -114,7 +114,7 @@ export class UserApplicationService extends AbstractApplicationService<
     return Result.ok(retrieved.data);
   }
 
-  async findByEmail(email: string): Promise<Result<User>> {
+  async findByEmail(email: string): Promise<Result<Member>> {
     const result = await this.get(
       { email: email }
     )
@@ -126,7 +126,7 @@ export class UserApplicationService extends AbstractApplicationService<
     return result
   }
 
-  async get(where: object): Promise<Result<User>> {
+  async get(where: object): Promise<Result<Member>> {
     const fetched = await this.manager.getOne(where);
 
     if (fetched.isFailure()) {
@@ -135,15 +135,15 @@ export class UserApplicationService extends AbstractApplicationService<
       );
     }
 
-    return Result.ok<User>(fetched.data);
+    return Result.ok<Member>(fetched.data);
   }
 
-  async all(): Promise<Result<User[]>> {
+  async all(): Promise<Result<Member[]>> {
     const result = await this.manager.find();
     return result
   }
 
-  async filter(where: object): Promise<Result<User[]>> {
+  async filter(where: object): Promise<Result<Member[]>> {
     const fetched = await this.manager.filter(where);
 
     if (fetched.isFailure()) {
@@ -158,6 +158,6 @@ export class UserApplicationService extends AbstractApplicationService<
   }
 
   getModelLabel(): string {
-    return User.LABEL;
+    return Member.LABEL;
   }
 }

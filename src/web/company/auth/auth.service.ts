@@ -1,38 +1,38 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { compare, compareSync, hashSync } from "bcrypt";
-import { UserEntrypoint } from "entrypoint/user.entrypoint";
-import { UserApplicationService } from "../../../company/application/service/UserApplicationService";
-import { User } from "../../../company/domain/entities/User";
+import { MemberEntrypoint } from "entrypoint/member.entrypoint";
+import { MemberApplicationService } from "../../../company/application/service/MemberApplicationService";
+import { Member } from "../../../company/domain/entities/Member";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { Result } from "../../../../kernel/Result/Result";
 
 interface TokenPayload {
-  userId: string
+  memberId: string
 }
 
 @Injectable()
 export class AuthService {
-  protected applicationService: UserApplicationService;
+  protected applicationService: MemberApplicationService;
 
   constructor(
-    entrypoint: UserEntrypoint,
+    entrypoint: MemberEntrypoint,
     private readonly jwtService: JwtService
   ) {
     this.applicationService = entrypoint.getApplicationService();
   }
 
-  async login(user: User) {
+  async login(member: Member) {
     const token = this.jwtService.sign({
-      sub: user.id,
-      word: user.name
+      sub: member.id,
+      word: member.name
     })
 
     const refreshToken = this.jwtService.sign({
-      sub: user.id,
+      sub: member.id,
       word: 'refresh'
     })
 
-    const result = await this.setCurrentRefreshToken(refreshToken, user.id)
+    const result = await this.setCurrentRefreshToken(refreshToken, member.id)
     if (result.isFailure()) {
       return result.error
     }
@@ -43,20 +43,29 @@ export class AuthService {
     }
   }
 
-  async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.applicationService.findByEmail(email)
+  async validateMember(email: string, password: string): Promise<Member> {
+    const member = await this.applicationService.findByEmail(email)
 
-    if (user.isFailure()) {
+    if (member.isFailure()) {
       return null
     }
 
-    const isPasswordValid = compareSync(password, user.data.password)
+    const isPasswordValid = compareSync(password, member.data.password)
 
     if (!isPasswordValid) {
       return null
     }
 
-    return user.data
+    return member.data
+  }
+
+  async getMember(id: string): Promise<Member> {
+    const member = await this.applicationService.getById(id)
+    if (member.isFailure()) {
+      return null
+    }
+
+    return member.data
   }
 
   async createAccessTokenFromRefreshToken
@@ -67,18 +76,18 @@ export class AuthService {
         throw new Error();
       }
 
-      const user = await this.applicationService.getById(decoded.userId);
-      if (user.isFailure()) {
-        throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+      const member = await this.applicationService.getById(decoded.memberId);
+      if (member.isFailure()) {
+        throw new HttpException('Member with this id does not exist', HttpStatus.NOT_FOUND);
       }
 
-      const isRefreshTokenMatching = await compare(refreshToken, user.data.refresh_token);
+      const isRefreshTokenMatching = await compare(refreshToken, member.data.refresh_token);
       if (!isRefreshTokenMatching) {
         throw new UnauthorizedException('Invalid token');
       }
 
       await this.jwtService.verifyAsync(refreshToken, this.getTokenOptions());
-      return this.login(user.data);
+      return this.login(member.data);
     } catch {
       throw new UnauthorizedException('Invalid token');
     }
@@ -95,10 +104,10 @@ export class AuthService {
     return options;
   }
 
-  async setCurrentRefreshToken(refreshToken: string, userId: string) {
+  async setCurrentRefreshToken(refreshToken: string, memberId: string) {
     const currentHashedRefreshToken = hashSync(refreshToken, 10);
 
-    const result = await this.applicationService.updateEntity(userId, {
+    const result = await this.applicationService.updateEntity(memberId, {
       refresh_token: currentHashedRefreshToken
     });
 
@@ -109,9 +118,9 @@ export class AuthService {
     return result
   }
 
-  async removeRefreshToken(userId: string) {
+  async removeRefreshToken(memberId: string) {
     const result = await this.applicationService
-      .updateEntity(userId, { refresh_token: null });
+      .updateEntity(memberId, { refresh_token: null });
 
     if (result.isFailure()) {
       return result.error

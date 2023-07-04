@@ -3,7 +3,7 @@ import { ORMBase } from './utils/ORMBase';
 import { Injectable } from '@nestjs/common';
 import { Company } from '../../../company/domain/entities/Company';
 import { CompanyDTO } from '../../../company/DTO/CompanyDTO';
-import { ORMUser } from './ORMUser';
+import { ORMMember } from './ORMMember';
 
 @Injectable()
 @Entity('Company')
@@ -35,10 +35,10 @@ export class ORMCompany extends ORMBase {
   @Column()
   address: string;
 
-  @OneToMany(() => ORMUser, (user) => user.company, {
+  @OneToMany(() => ORMMember, (member) => member.company, {
     onDelete: 'CASCADE',
   })
-  users?: ORMUser[];
+  members?: ORMMember[];
 
   static import(instance: Company): ORMCompany {
     const entity = new ORMCompany();

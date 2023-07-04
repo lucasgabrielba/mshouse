@@ -1,29 +1,29 @@
 import { Chance as generate } from 'chance';
-import { UserDTO } from '../../src/company/DTO/UserDTO';
-import { UserType } from '../../src/company/domain/enum/UserType';
-import { User } from '../../src/company/domain/entities/User';
-import { ORMUser } from '../../src/infra/database/entities/ORMUser';
+import { MemberDTO } from '../../src/company/DTO/MemberDTO';
+import { MemberType } from '../../src/company/domain/enum/MemberType';
+import { Member } from '../../src/company/domain/entities/Member';
+import { ORMMember } from '../../src/infra/database/entities/ORMMember';
 import { createCompanyDTO, createCompany } from './company';
 import { ORMCompany } from '../../src/infra/database/entities/ORMCompany';
 
-export const createUserDTO = (
+export const createMemberDTO = (
   type?: 'manager' | 'attendante' | 'technique',
-): Omit<UserDTO, 'id'> => {
-  let userType: any;
+): Omit<MemberDTO, 'id'> => {
+  let memberType: any;
   if (type === 'manager') {
-    userType = UserType.MANAGER;
+    memberType = MemberType.MANAGER;
   }
   if (type === 'attendante') {
-    userType = UserType.ATTENDANT;
+    memberType = MemberType.ATTENDANT;
   }
   if (type === 'technique') {
-    userType = UserType.TECHNIQUE;
+    memberType = MemberType.TECHNIQUE;
   }
   if (!type) {
-    userType = generate().pickone([
-      UserType.MANAGER,
-      UserType.ATTENDANT,
-      UserType.TECHNIQUE,
+    memberType = generate().pickone([
+      MemberType.MANAGER,
+      MemberType.ATTENDANT,
+      MemberType.TECHNIQUE,
     ]);
   }
 
@@ -40,7 +40,7 @@ export const createUserDTO = (
     name: generate().name(),
     email: generate().email(),
     password: generate().hash(),
-    type: userType,
+    type: memberType,
     company: {
       ...createCompanyDTO(),
       id: generate().guid({ version: 4 }),
@@ -52,20 +52,20 @@ export const createUserDTO = (
   };
 };
 
-export const createUser = (
+export const createMember = (
   type?: 'manager' | 'attendante' | 'technique',
-  data?: Omit<UserDTO, 'id'>,
+  data?: Omit<MemberDTO, 'id'>,
   id?: string,
-): User => {
+): Member => {
   if (data && id) {
-    const UserData = {
+    const MemberData = {
       ...data,
       id,
     };
 
-    return User.reconstitute(UserData).data;
+    return Member.reconstitute(MemberData).data;
   }
-  data = data ?? createUserDTO(type ?? null);
+  data = data ?? createMemberDTO(type ?? null);
 
   const company = createCompany(data.company);
   const createData = {
@@ -73,35 +73,35 @@ export const createUser = (
     company: company,
   };
 
-  return User.create(createData).data;
+  return Member.create(createData).data;
 };
 
-export const createORMUser = (
-  User?: User,
+export const createORMMember = (
+  Member?: Member,
   type?: 'manager' | 'attendante' | 'technique',
-): ORMUser => {
-  let userType: any;
+): ORMMember => {
+  let memberType: any;
   if (type === 'manager') {
-    userType = UserType.MANAGER;
+    memberType = MemberType.MANAGER;
   }
   if (type === 'attendante') {
-    userType = UserType.ATTENDANT;
+    memberType = MemberType.ATTENDANT;
   }
   if (type === 'technique') {
-    userType = UserType.TECHNIQUE;
+    memberType = MemberType.TECHNIQUE;
   }
 
-  const entity = new ORMUser();
+  const entity = new ORMMember();
 
-  if (User) {
-    entity.id = User.id.toString();
+  if (Member) {
+    entity.id = Member.id.toString();
 
-    entity.name = User.name;
-    entity.email = User.email;
-    entity.type = User.type;
-    entity.company = ORMCompany.import(User.company);
+    entity.name = Member.name;
+    entity.email = Member.email;
+    entity.type = Member.type;
+    entity.company = ORMCompany.import(Member.company);
 
-    entity.createdAt = User.createdAt;
+    entity.createdAt = Member.createdAt;
 
     return entity;
   }
@@ -112,7 +112,7 @@ export const createORMUser = (
 
   entity.name = generate().name();
   entity.email = generate().email();
-  entity.type = userType;
+  entity.type = memberType;
   entity.company = ORMCompany.import(company);
 
   entity.createdAt = entity.createdAt = new Date();

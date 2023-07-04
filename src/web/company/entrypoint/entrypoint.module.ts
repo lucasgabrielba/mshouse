@@ -1,10 +1,10 @@
 import { Module, Global } from '@nestjs/common';
 import { CompanyEntrypoint } from './company.entrypoint';
-import { UserEntrypoint } from './user.entrypoint';
+import { MemberEntrypoint } from './member.entrypoint';
 
 @Global()
 @Module({
-  providers: [CompanyEntrypoint, UserEntrypoint],
-  exports: [CompanyEntrypoint, UserEntrypoint],
+  providers: [CompanyEntrypoint, MemberEntrypoint],
+  exports: [CompanyEntrypoint, MemberEntrypoint],
 })
 export class EntrypointModule {}

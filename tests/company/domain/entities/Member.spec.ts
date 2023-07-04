@@ -1,57 +1,57 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-  CreateUserProps,
-  User,
-} from '../../../../src/company/domain/entities/User';
-import { UserType } from '../../../../src/company/domain/enum/UserType';
-import { UserDTO } from '../../../../src/company/DTO/UserDTO';
+  CreateMemberProps,
+  Member,
+} from '../../../../src/company/domain/entities/Member';
+import { MemberType } from '../../../../src/company/domain/enum/MemberType';
+import { MemberDTO } from '../../../../src/company/DTO/MemberDTO';
 import { Chance as generate } from 'chance';
 import { createCompany } from '../../../utils/company';
 
-describe('User', () => {
+describe('Member', () => {
   describe('create', () => {
-    it('should create a new user', () => {
-      const props: CreateUserProps = {
+    it('should create a new member', () => {
+      const props: CreateMemberProps = {
         name: 'John Doe',
-        type: UserType.MANAGER,
+        type: MemberType.MANAGER,
         email: generate().email(),
         password: generate().hash(),
         company: createCompany(),
       };
 
-      const result = User.create(props);
+      const result = Member.create(props);
 
       expect(result.isSuccess()).toBe(true);
-      expect(result.data).toBeInstanceOf(User);
+      expect(result.data).toBeInstanceOf(Member);
       expect(result.data.name).toBe(props.name);
       expect(result.data.type).toBe(props.type);
     });
 
     it('should fail when name is missing', () => {
-      const props: CreateUserProps = {
+      const props: CreateMemberProps = {
         name: '',
-        type: UserType.TECHNIQUE,
+        type: MemberType.TECHNIQUE,
         email: generate().email(),
         password: generate().hash(),
         company: createCompany(),
       };
 
-      const result = User.create(props);
+      const result = Member.create(props);
 
       expect(result.isFailure()).toBe(true);
       expect(result.error).toBeInstanceOf(Error);
     });
 
     it('should fail when type is invalid', () => {
-      const props: CreateUserProps = {
+      const props: CreateMemberProps = {
         name: 'Alice',
-        type: 'INVALID_TYPE' as UserType,
+        type: 'INVALID_TYPE' as MemberType,
         email: generate().email(),
         password: generate().hash(),
         company: createCompany(),
       };
 
-      const result = User.create(props);
+      const result = Member.create(props);
 
       expect(result.isFailure()).toBe(true);
       expect(result.error).toBeInstanceOf(Error);
@@ -59,27 +59,27 @@ describe('User', () => {
   });
 
   describe('reconstitute', () => {
-    it('should reconstitute an user from DTO', () => {
-      const userDTO: UserDTO = {
+    it('should reconstitute an member from DTO', () => {
+      const memberDTO: MemberDTO = {
         id: uuidv4(),
         name: 'Jane Smith',
         email: generate().email(),
         password: generate().hash(),
         company: createCompany().toDTO(),
         refresh_token: generate().hash(),
-        type: UserType.ATTENDANT,
+        type: MemberType.ATTENDANT,
         createdAt: new Date().toISOString(),
         updatedAt: null,
         deletedAt: null,
       };
 
-      const result = User.reconstitute(userDTO);
+      const result = Member.reconstitute(memberDTO);
 
       expect(result.isSuccess()).toBe(true);
-      expect(result.data).toBeInstanceOf(User);
-      expect(result.data.id).toBe(userDTO.id);
-      expect(result.data.name).toBe(userDTO.name);
-      expect(result.data.type).toBe(userDTO.type);
+      expect(result.data).toBeInstanceOf(Member);
+      expect(result.data.id).toBe(memberDTO.id);
+      expect(result.data.name).toBe(memberDTO.name);
+      expect(result.data.type).toBe(memberDTO.type);
     });
   });
 });

@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
-import { ORMUser } from '../entities/ORMUser';
+import { ORMMember } from '../entities/ORMMember';
 import { Result } from '../../../../kernel/Result/Result';
-import { UserRepositoryInterface } from '../../../company/domain/repository/UserRepositoryInterface';
-import { User } from '../../../company/domain/entities/User';
+import { MemberRepositoryInterface } from '../../../company/domain/repository/MemberRepositoryInterface';
+import { Member } from '../../../company/domain/entities/Member';
 
 @Injectable()
-export class UserRepository
-  extends Repository<ORMUser>
-  implements UserRepositoryInterface {
+export class MemberRepository
+  extends Repository<ORMMember>
+  implements MemberRepositoryInterface {
   constructor(dataSource: DataSource) {
-    super(ORMUser, dataSource.createEntityManager());
+    super(ORMMember, dataSource.createEntityManager());
   }
 
-  async persist(instance: User): Promise<Result<void>> {
+  async persist(instance: Member): Promise<Result<void>> {
     try {
-      await this.save(ORMUser.import(instance));
+      await this.save(ORMMember.import(instance));
       return Result.ok();
     } catch (e) {
       if (e instanceof QueryFailedError) {
@@ -25,7 +25,7 @@ export class UserRepository
     }
   }
 
-  async findById(id: string): Promise<Result<User>> {
+  async findById(id: string): Promise<Result<Member>> {
     const result = await this.findOne({
       where: { id: id.toString() },
       relations: ['company'],
@@ -34,29 +34,29 @@ export class UserRepository
       return Result.fail(new Error('not found'));
     }
 
-    return Result.ok<User>(result.export());
+    return Result.ok<Member>(result.export());
   }
 
-  async findOneEntity(where: object): Promise<Result<User>> {
+  async findOneEntity(where: object): Promise<Result<Member>> {
     try {
       const result = await this.findOne({ where: where, relations: ['company'] });
       if (!result) {
         return Result.fail(new Error('not found'));
       }
 
-      const User = result.export();
-      return Result.ok(User);
+      const Member = result.export();
+      return Result.ok(Member);
     } catch (error) {
       return Result.fail(error);
     }
   }
-  async findEntity(): Promise<Result<User[]>> {
+  async findEntity(): Promise<Result<Member[]>> {
     const result = await this.find({ relations: ['company'], });
-    const results = result.map((User) => User.export());
+    const results = result.map((Member) => Member.export());
     return Result.ok(results);
   }
 
-  async deleteEntity(instance: User): Promise<Result<void>> {
+  async deleteEntity(instance: Member): Promise<Result<void>> {
     try {
       const entity = await this.findOne({
         where: { id: instance.id.toString() },

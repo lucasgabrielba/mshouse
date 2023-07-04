@@ -1,14 +1,14 @@
 import { Module, Global } from '@nestjs/common';
 import { CompanyRepository } from './CompanyRepository';
-import { UserRepository } from './UserRepository';
+import { MemberRepository } from './MemberRepository';
 import { ORMCompany } from '../entities/ORMCompany';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ORMUser } from '../entities/ORMUser';
+import { ORMMember } from '../entities/ORMMember';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([ORMCompany, ORMUser])],
-  providers: [CompanyRepository, UserRepository],
-  exports: [CompanyRepository, UserRepository],
+  imports: [TypeOrmModule.forFeature([ORMCompany, ORMMember])],
+  providers: [CompanyRepository, MemberRepository],
+  exports: [CompanyRepository, MemberRepository],
 })
 export class RepositoryModule {}

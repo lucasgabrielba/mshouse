@@ -1,6 +1,5 @@
 import { Result } from '../../../../kernel/Result/Result';
 import { AbstractApplicationService } from '../../../../kernel/application/service/AbstactApplicationService';
-import { isUUID } from '../../../../kernel/isUUID/isUUID';
 import { CompanyDTOPrimitive } from '../../DTO/CompanyDTO';
 import { CompanyDomainService } from '../../domain/domainService/CompanyDomainService';
 import { CreateCompanyPropsPrimitive, Company, UpdateCompanyPropsPrimitive } from '../../domain/entities/Company';
@@ -70,13 +69,8 @@ export class CompanyApplicationService extends AbstractApplicationService<
   }
 
   async getById(id: string): Promise<Result<Company>> {
-    const isValid = isUUID(id);
-
-    if (!isValid) {
-      return Result.fail(new Error('O id fornecido de empresa não é válido.'));
-    }
-
     const retrieved = await this.manager.get(id);
+
     if (retrieved.isFailure()) {
       return Result.fail(
         new Error(`Não foi possível resgatar "${this.getModelLabel()}".`),

@@ -1,44 +1,43 @@
 import { v4 } from 'uuid';
 import * as Joi from 'joi';
 import { Result } from '../../../../kernel/Result/Result';
-import { UserDTO } from '../../DTO/UserDTO';
+import { MemberDTO } from '../../DTO/MemberDTO';
 import {
   Auditable,
   AuditableProps,
 } from '../../../../kernel/domain/entity/Auditable';
-import { UserType } from '../enum/UserType';
+import { MemberType } from '../enum/MemberType';
 import { Company } from './Company';
-import { hashSync } from 'bcrypt';
 
-export interface CreateUserPropsPrimitive {
+export interface CreateMemberPropsPrimitive {
   name: string;
   email: string;
   password: string;
-  type: UserType;
-  companyId: string;
+  type: MemberType;
+  companyId?: string;
   refresh_token?: string;
 }
 
-export interface UpdateUserPropsPrimitive
-  extends Partial<CreateUserPropsPrimitive> {}
+export interface UpdateMemberPropsPrimitive
+  extends Partial<CreateMemberPropsPrimitive> {}
 
-export interface CreateUserProps {
+export interface CreateMemberProps {
   name: string;
   email: string;
   password: string;
-  type: UserType;
+  type: MemberType;
   company: Company;
   refresh_token?: string;
 }
 
-export interface UserProps extends CreateUserProps, AuditableProps {}
+export interface MemberProps extends CreateMemberProps, AuditableProps {}
 
-export class User extends Auditable {
-  constructor(protected props: UserProps) {
+export class Member extends Auditable {
+  constructor(protected props: MemberProps) {
     super(props);
   }
 
-  public static readonly LABEL: string = 'User';
+  public static readonly LABEL: string = 'Member';
 
   get name(): string {
     return this.props.name;
@@ -52,7 +51,7 @@ export class User extends Auditable {
     return this.props.password;
   }
 
-  get type(): UserType {
+  get type(): MemberType {
     return this.props.type;
   }
 
@@ -64,13 +63,13 @@ export class User extends Auditable {
     return this.props.refresh_token;
   }
 
-  static create(props: CreateUserProps): Result<User> {
-    const validated = User.validate({
+  static create(props: CreateMemberProps): Result<Member> {
+    const validated = Member.validate({
       id: v4(),
       name: props.name,
       email: props.email,
-      password: hashSync(props.password, 10),
-      type: UserType[props.type],
+      password: props.password,
+      type: MemberType[props.type],
       company: props.company,
       refresh_token: props.refresh_token,
       createdAt: new Date(),
@@ -82,17 +81,17 @@ export class User extends Auditable {
       return Result.fail(validated.error);
     }
 
-    return Result.ok(new User(validated.data));
+    return Result.ok(new Member(validated.data));
   }
 
-  static reconstitute(props: UserDTO): Result<User> {
-    const validated = User.validate({
+  static reconstitute(props: MemberDTO): Result<Member> {
+    const validated = Member.validate({
       ...props,
       id: props.id ?? v4(),
       name: props.name,
       email: props.email,
       password: props.password,
-      type: UserType[props.type],
+      type: MemberType[props.type],
       company: Company.reconstitute(props.company).data,
       refresh_token: props.refresh_token,
       createdAt: props.createdAt ? new Date(props.createdAt) : undefined,
@@ -104,10 +103,10 @@ export class User extends Auditable {
       return Result.fail(validated.error);
     }
 
-    return Result.ok<User>(new User(validated.data));
+    return Result.ok<Member>(new Member(validated.data));
   }
 
-  static validate(data: UserProps): Result<UserProps> {
+  static validate(data: MemberProps): Result<MemberProps> {
     const schema = {
       id: Joi.string().uuid().required(),
       name: Joi.string().min(1).max(255).required(),
@@ -115,9 +114,9 @@ export class User extends Auditable {
       password: Joi.string().min(8).max(255).required(),
       type: Joi.string()
         .valid(
-          UserType.MANAGER,
-          UserType.TECHNIQUE,
-          UserType.ATTENDANT,
+          MemberType.MANAGER,
+          MemberType.TECHNIQUE,
+          MemberType.ATTENDANT,
         )
         .required(),
       company: Joi.object().instance(Company).required(),
@@ -136,7 +135,7 @@ export class User extends Auditable {
     return Result.ok(value);
   }
 
-  toDTO(): UserDTO {
+  toDTO(): MemberDTO {
     return {
       id: this.id,
       name: this.name,
