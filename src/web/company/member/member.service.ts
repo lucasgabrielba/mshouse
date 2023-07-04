@@ -37,11 +37,11 @@ export class MemberService {
     return result;
   }
 
-  async create(data: CreateMemberPropsPrimitive, actor: string): Promise<Result<Member>> {
-    const ismanager = validatePermission(actor)
-    if (!ismanager) {
-      return Result.fail(new UnauthorizedException('Voce não possui permissão'))
-    }
+  async create(data: CreateMemberPropsPrimitive): Promise<Result<Member>> {
+    // const ismanager = validatePermission(actor)
+    // if (!ismanager) {
+    //   return Result.fail(new UnauthorizedException('Voce não possui permissão'))
+    // }
 
     const result = await this.applicationService.create(data);
     return result;

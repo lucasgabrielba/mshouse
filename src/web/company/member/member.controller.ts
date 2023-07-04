@@ -20,7 +20,7 @@ import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('member')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 export class MemberController {
   constructor(private readonly service: MemberService) {}
 
@@ -69,7 +69,7 @@ export class MemberController {
       ...data,
       companyId: data.companyId ?? req.member.companyId
     }
-    const result = await this.service.create(createData, req.member.type);
+    const result = await this.service.create(createData);
     if (result.isFailure()) {
       res
         .status(400)

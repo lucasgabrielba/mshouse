@@ -2,7 +2,9 @@ import { Result } from '../../../../kernel/Result/Result';
 import { AbstractApplicationService } from '../../../../kernel/application/service/AbstactApplicationService';
 import { CompanyDTOPrimitive } from '../../DTO/CompanyDTO';
 import { CompanyDomainService } from '../../domain/domainService/CompanyDomainService';
+import { Address } from '../../domain/entities/Address';
 import { CreateCompanyPropsPrimitive, Company, UpdateCompanyPropsPrimitive } from '../../domain/entities/Company';
+import { AddressApplicationService } from './AddressApplicationService';
 
 export class CompanyApplicationService extends AbstractApplicationService<
   Company,
@@ -10,7 +12,8 @@ export class CompanyApplicationService extends AbstractApplicationService<
   CreateCompanyPropsPrimitive,
   CompanyDomainService
 > {
-  constructor(readonly manager: CompanyDomainService) {
+  constructor(readonly manager: CompanyDomainService,
+    protected readonly addressAppService: AddressApplicationService) {
     super(manager);
   }
 
@@ -21,7 +24,13 @@ export class CompanyApplicationService extends AbstractApplicationService<
       return Result.fail(new Error('Email já cadastrado para um empresa'));
     }
 
-    const result = await this.manager.createAndSave(data);
+    const address = await this.addressAppService.create(data.address)
+
+    if (address.isFailure()) {
+      return Result.fail(address.error);
+    }
+
+    const result = await this.manager.createAndSave({ ...data, address: address.data });
 
     if (result.isFailure()) {
       return Result.fail(result.error);
@@ -40,9 +49,16 @@ export class CompanyApplicationService extends AbstractApplicationService<
       return Result.fail(entity.error);
     }
 
+    let address: Result<Address> = Result.ok(entity.data.address)
+    if (data.address) {
+      address = await this.addressAppService
+        .updateEntity(entity.data.address.id, data.address)
+    }
+
     const updateData = {
       ...entity.data.toDTO(),
       ...data,
+      address: address.data.toDTO()
     };
 
     const built = await this.manager.build(updateData);

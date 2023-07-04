@@ -5,6 +5,7 @@ import { CompanyRepository } from '../../../infra/database/repositories/CompanyR
 import { CompanyApplicationService } from '../../../company/application/service/CompanyApplicationService';
 import { CompanyDomainService } from '../../../company/domain/domainService/CompanyDomainService';
 import { Injectable } from '@nestjs/common';
+import { CompanyEntrypoint } from './company.entrypoint';
 
 @Injectable()
 export class MemberEntrypoint {
@@ -13,11 +14,10 @@ export class MemberEntrypoint {
 
   constructor(
     repository: MemberRepository,
-    companyRepository: CompanyRepository,
+    companyEntrypoint: CompanyEntrypoint
   ) {
     if (!MemberEntrypoint.instance) {
-      const companyDomainService = new CompanyDomainService(companyRepository);
-      const companyAppService = new CompanyApplicationService(companyDomainService);
+      const companyAppService = companyEntrypoint.getApplicationService()
       const domainService = new MemberDomainService(repository);
       MemberEntrypoint.instance = new MemberApplicationService(
         domainService,

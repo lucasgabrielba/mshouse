@@ -21,7 +21,7 @@ import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('company')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 export class CompanyController {
   constructor(private readonly service: CompanyService) {}
 
@@ -74,7 +74,7 @@ export class CompanyController {
     @Req() req: any,
   ): Promise<CompanyDTO> {
 
-    const result = await this.service.create(data, req.member.type);
+    const result = await this.service.create(data);
 
     if (result.isFailure()) {
       res

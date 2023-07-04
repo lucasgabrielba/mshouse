@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ORMCompany } from './entities/ORMCompany';
 import { ORMMember } from './entities/ORMMember';
 import { ORMModule } from './entities/orm.module';
+import { ORMAddress } from './entities/ORMAddress';
 
 @Module({
   imports: [
@@ -16,11 +17,11 @@ import { ORMModule } from './entities/orm.module';
         type: 'postgres',
         host: configService.get('DATABASE_HOST'),
         port: Number(configService.get('DATABASE_PORT')),
-        membername: configService.get('DATABASE_USER'),
+        username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [ORMCompany, ORMMember],
-        synchronize: false,
+        entities: [ORMCompany, ORMMember, ORMAddress],
+        synchronize: true,
       }),
       inject: [ConfigService],
     }),

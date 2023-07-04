@@ -4,11 +4,13 @@ import { MemberRepository } from './MemberRepository';
 import { ORMCompany } from '../entities/ORMCompany';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ORMMember } from '../entities/ORMMember';
+import { ORMAddress } from '../entities/ORMAddress';
+import { AddressRepository } from './AddressRepository';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([ORMCompany, ORMMember])],
-  providers: [CompanyRepository, MemberRepository],
-  exports: [CompanyRepository, MemberRepository],
+  imports: [TypeOrmModule.forFeature([ORMCompany, ORMMember, ORMAddress])],
+  providers: [CompanyRepository, MemberRepository, AddressRepository],
+  exports: [CompanyRepository, MemberRepository, AddressRepository],
 })
 export class RepositoryModule {}
