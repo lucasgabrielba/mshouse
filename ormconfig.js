@@ -11,7 +11,7 @@ const connection = new DataSource({
   entities: [
     "dist/src/infra/database/entities/*{.ts,.js}" 
   ],
-  synchronize: false, 
+  synchronize: true, 
   logging: false,
   migrations: [
     'src/infra/database/migrations/*.js',

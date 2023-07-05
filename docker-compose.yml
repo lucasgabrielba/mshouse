@@ -4,9 +4,9 @@ services:
   postgres:
     image: "postgres:11.5"
     environment:
-      - "POSTGRES_USER=test"
-      - "POSTGRES_DB=test"
-      - "POSTGRES_PASSWORD=test"
+      - "POSTGRES_USER=admin"
+      - "POSTGRES_DB=mshouse"
+      - "POSTGRES_PASSWORD=admin|"
 
     expose:
       - "5432"
