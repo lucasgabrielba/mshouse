@@ -38,7 +38,6 @@ export abstract class AbstractDomainService<Model, DTO, CreateProps, Repository>
 
   async getOne(where: object): Promise<Result<Model>> {
     const fetched = await (this.repository as any).findOneEntity(where);
-
     if (fetched.isFailure()) {
       return Result.fail(fetched.error);
     }

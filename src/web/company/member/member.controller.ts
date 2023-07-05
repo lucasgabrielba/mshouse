@@ -20,13 +20,13 @@ import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('member')
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 export class MemberController {
   constructor(private readonly service: MemberService) {}
 
   @Get()
   async findAll(@Res() res: Response, @Req() req: any): Promise<MemberDTO[]> {
-    const result = await this.service.listAllMember(req.member.type);
+    const result = await this.service.listAllMember(req.user.type);
 
     if (result.isFailure()) {
       res
@@ -48,7 +48,7 @@ export class MemberController {
     @Res() res: Response,
     @Req() req: any
   ): Promise<MemberDTO> {
-    const result = await this.service.findOne(id, req.member.type);
+    const result = await this.service.findOne(id, req.user.type);
 
     if (result.isFailure()) {
       res.json({ error: result.error.message });
@@ -67,9 +67,9 @@ export class MemberController {
   ): Promise<MemberDTO> {
     const createData = {
       ...data,
-      companyId: data.companyId ?? req.member.companyId
+      companyId: data.companyId ?? req.user.companyId
     }
-    const result = await this.service.create(createData);
+    const result = await this.service.create(createData, req.user.type);
     if (result.isFailure()) {
       res
         .status(400)
@@ -91,7 +91,7 @@ export class MemberController {
     @Req() req: any
   ): Promise<MemberDTO> {
 
-    const result = await this.service.update(id, data, req.member.type);
+    const result = await this.service.update(id, data, req.user.type);
 
     if (result.isFailure()) {
       res
@@ -113,7 +113,7 @@ export class MemberController {
     @Req() req: any
   ): Promise<boolean> {
 
-    const result = await this.service.delete(id, req.member.type);
+    const result = await this.service.delete(id, req.user.type);
 
     if (result.isFailure()) {
       res

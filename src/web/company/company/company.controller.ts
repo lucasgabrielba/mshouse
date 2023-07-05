@@ -21,13 +21,13 @@ import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('company')
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 export class CompanyController {
   constructor(private readonly service: CompanyService) {}
 
   @Get()
   async findAll(@Res() res: Response, @Req() req: any): Promise<CompanyDTO[]> {
-    const result = await this.service.listAllCompany(req.member.type);
+    const result = await this.service.listAllCompany(req.user.type);
 
     if (result.isFailure()) {
       res.status(400).json({ error: result.error.message });
@@ -54,7 +54,7 @@ export class CompanyController {
     @Res() res: Response,
     @Req() req: any,
   ): Promise<CompanyDTO> {
-    const result = await this.service.findOne(id, req.member.type);
+    const result = await this.service.findOne(id, req.user.type);
 
     if (result.isFailure()) {
       res
@@ -74,7 +74,7 @@ export class CompanyController {
     @Req() req: any,
   ): Promise<CompanyDTO> {
 
-    const result = await this.service.create(data);
+    const result = await this.service.create(data, req.user.type);
 
     if (result.isFailure()) {
       res
@@ -94,7 +94,7 @@ export class CompanyController {
     @Req() req: any,
   ): Promise<CompanyDTO> {
 
-    const result = await this.service.update(id, data, req.member.type);
+    const result = await this.service.update(id, data, req.user.type);
 
     if (result.isFailure()) {
       res
@@ -114,7 +114,7 @@ export class CompanyController {
     @Req() req: any,
   ): Promise<boolean> {
 
-    const result = await this.service.delete(id, req.member.type);
+    const result = await this.service.delete(id, req.user.type);
 
     if (result.isFailure()) {
       res

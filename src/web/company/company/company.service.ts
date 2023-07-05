@@ -37,11 +37,11 @@ export class CompanyService {
     return result;
   }
 
-  async create(data: CreateCompanyPropsPrimitive): Promise<Result<Company>> {
-    // const ismanager = validatePermission(actor)
-    // if (!ismanager) {
-    //   return Result.fail(new UnauthorizedException('Voce não possui permissão'))
-    // }
+  async create(data: CreateCompanyPropsPrimitive, actor: string): Promise<Result<Company>> {
+    const ismanager = validatePermission(actor)
+    if (!ismanager) {
+      return Result.fail(new UnauthorizedException('Voce não possui permissão'))
+    }
 
     const result = await this.applicationService.create(data);
     return result;
